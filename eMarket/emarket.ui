@@ -82,7 +82,7 @@
        <enum>QFrame::WinPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page3">
        <property name="enabled">
@@ -130,7 +130,7 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="newNameLineEdit">
         <property name="geometry">
          <rect>
           <x>40</x>
@@ -140,7 +140,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_3">
+       <widget class="QLineEdit" name="newOutputLineEdit">
         <property name="geometry">
          <rect>
           <x>160</x>
@@ -150,7 +150,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QPushButton" name="newUpoadPushButton">
+       <widget class="QPushButton" name="newUploadPushButton">
         <property name="geometry">
          <rect>
           <x>164</x>
@@ -163,7 +163,7 @@
          <string>上 传...</string>
         </property>
        </widget>
-       <widget class="QTableView" name="tableView">
+       <widget class="QTableView" name="commodityTableView">
         <property name="geometry">
          <rect>
           <x>240</x>
@@ -198,7 +198,7 @@
          <number>1</number>
         </property>
        </widget>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="newCategoryComboBox">
         <property name="geometry">
          <rect>
           <x>40</x>
@@ -208,7 +208,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_2">
+       <widget class="QLineEdit" name="newInputLineEdit">
         <property name="geometry">
          <rect>
           <x>40</x>
@@ -244,6 +244,120 @@
          <string>清 仓</string>
         </property>
        </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>类别</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>名称</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>进价</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>80</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>售价</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>数量</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>170</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>商品样照</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="page4">
        <property name="geometry">
@@ -257,7 +371,7 @@
        <attribute name="label">
         <string>Page 2</string>
        </attribute>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="preCategoryComboBox">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -267,7 +381,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QComboBox" name="comboBox_3">
+       <widget class="QComboBox" name="preNameComboBox">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -277,7 +391,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="preOutputPriceLabel">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -296,7 +410,7 @@
          <string/>
         </property>
        </widget>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="prePictrueLabel">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -323,7 +437,7 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QSpinBox" name="preCountSpinBox">
         <property name="geometry">
          <rect>
           <x>50</x>
@@ -339,7 +453,7 @@
          <number>1</number>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="preSellPushButton">
         <property name="geometry">
          <rect>
           <x>180</x>
@@ -352,7 +466,7 @@
          <string>出 售</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="prePlaceOrderPushButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -368,17 +482,17 @@
          <string>下 单</string>
         </property>
        </widget>
-       <widget class="QListWidget" name="listWidget">
+       <widget class="QListWidget" name="sellListWidget">
         <property name="geometry">
          <rect>
-          <x>290</x>
+          <x>300</x>
           <y>0</y>
           <width>441</width>
           <height>311</height>
          </rect>
         </property>
        </widget>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="preAmountPriceLabel">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -397,7 +511,7 @@
          <string/>
         </property>
        </widget>
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="preTotalLabel">
         <property name="geometry">
          <rect>
           <x>190</x>
@@ -414,6 +528,84 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>类别</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>名称</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>单价</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>100</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>库存</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>数量</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>140</y>
+          <width>54</width>
+          <height>12</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>总价</string>
         </property>
        </widget>
       </widget>

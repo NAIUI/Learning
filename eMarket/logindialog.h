@@ -27,4 +27,21 @@ private:
     Ui::LoginDialog *ui;
 };
 
+static bool createMySqlConn()
+{
+    QSqlDatabase sqldb = QSqlDatabase::addDatabase("QMYSQL");
+    sqldb.setHostName("127.0.0.1");
+    sqldb.setDatabaseName("emarket");
+    sqldb.setPort(3306);
+    sqldb.setUserName("root");
+    sqldb.setPassword("root");
+    if (!sqldb.open())
+    {
+        QMessageBox::critical(0,QObject::tr("后台数据库连接失败"), "请检查后继续！！！",
+                              QMessageBox::Cancel);
+        return false;
+    }
+    return true;
+}
+
 #endif // LOGINDIALOG_H

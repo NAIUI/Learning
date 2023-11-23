@@ -32,8 +32,7 @@ SOURCES += \
 
 HEADERS += \
         emarket.h \
-    logindialog.h \
-    connection.h
+    logindialog.h
 
 FORMS += \
         emarket.ui \
