@@ -166,7 +166,7 @@ void eMarket::on_newUploadPushButton_clicked()
 void eMarket::on_newClearancePushButton_clicked()
 {
     QSqlQuery query;
-    query.exec(QString("delete from commodity where Name=' 1'").arg(ui->newNameLineEdit->text ())); // 删除商品记录
+    query.exec(QString("delete from commodity where Name='%1'").arg(ui->newNameLineEdit->text())); // 删除商品记录
     // 刷新界面
     ui->newNameLineEdit->setText("");
     ui->newInputLineEdit->setText("");
@@ -184,11 +184,11 @@ void eMarket::on_preSellPushButton_clicked()
     QSqlQuery query;
     if (!myOrdered) // (a)
     {
-        query.exec(QString("insert into orders(MemberID, PaySum, PayWay, OTinme) "
+        query.exec(QString("insert into orders(MemberID, PaySum, PayWay, OTime) "
                            "values('%1', NULL, NULL, NULL)") .arg(myMemberID));
         myOrdered = true;
-        query.exec(QString("select OrderID from orders where OTime IS NULL"));
-
+        // qDebug() << query.lastError().text();
+        query.exec(QString("select OrderID from orders where MemberID = '%1'").arg(myMemberID));
         query.next();
         myOrderID = query.value(0).toInt();
     }
@@ -231,12 +231,13 @@ void eMarket::on_preSellPushButton_clicked()
 
 void eMarket::on_prePlaceOrderPushButton_clicked()
 {
+    QSqlDatabase loaclDB = QSqlDatabase::database();
     QSqlQuery query;
-    QString otime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm: ss");
+    QString otime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     QSqlDatabase::database().transaction();         // 开始一个事务
-    bool ordOk = query.exec(QString("update orders set PaySum= %1, OTime=' %2' where OrderID= %3")
+    bool ordOk = query.exec(QString("update orders set PaySum= %1, OTime='%2' where OrderID= %3")
                             .arg(myPaySum).arg (otime).arg (myOrderID)); //下订单
-    bool uptOk = query.exec (QString ("update orderi terns set Affirm=1, SendGoods=1 where OrderID= %1").arg (myOrderID));          // 确认发货
+    bool uptOk = query.exec (QString ("update orderitems set Affirm=1, SendGoods=1 where OrderID= %1").arg (myOrderID));          // 确认发货
     if (ordOk && uptOk)
     {
         QSqlDatabase:: database().commit();
