@@ -10,7 +10,7 @@ MyQQ::MyQQ(QWidget *parent)
 
     // test
     ui->userListTableWidget->insertRow(0);
-    ui->userListTableWidget->setItem(0, 0, new QTableWidgetItem("name"));
+    ui->userListTableWidget->setItem(0, 1, new QTableWidgetItem("name"));
 }
 
 MyQQ::~MyQQ()
@@ -24,8 +24,8 @@ void MyQQ::initMainWindow()
     myUdpPort = 23232;
     myUdpSocket->bind(QHostAddress::Any, myUdpPort, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     connect(myUdpSocket, SIGNAL(readyRead()), this, SLOT(recvAndProcessChatMsg()));
-    myfsrv = new FileSrvDlg();
-    // connect(myfsrv, SIGNAL(sendFileName(QString)), this, SLOT(getSfileName(QString)));
+    myfsrv = new FileSrvDlg(this);
+    connect(myfsrv, SIGNAL(sendFileName(QString)), this, SLOT(getSfileName(QString)));
 }
 
 void MyQQ::on_searchPushButton_clicked()
@@ -94,11 +94,11 @@ void MyQQ::recvAndProcessChatMsg()
                 break;
             case SfileName:
                 read>> name>> hostip >> rname >> fname;
-                // recvFileName(name, hostip, rname, fname);
+                recvFileName(name, hostip, rname, fname);
                 break;
             case RefFile:
                 read>> name>> hostip >> rname;
-                // if(myname == rname) myfsrv->cntRefused();
+                if(myname == rname) myfsrv->cntRefused();
                 break;
         }
     }
@@ -153,4 +153,46 @@ QString MyQQ::getLocChatMsg()
 void MyQQ::on_sendPushButton_clicked()
 {
     sendChatMsg(ChatMsg);
+}
+
+void MyQQ::getSfileName(QString fname)
+{
+    myFileName = fname;
+    int row= ui->userListTableWidget->currentRow();
+    QString rmtName = ui->userListTableWidget->item(row, 0)->text();
+    sendChatMsg(SfileName, rmtName);
+}
+
+void MyQQ::on_transPushButton_clicked()
+{
+    if(ui->userListTableWidget->selectedItems().isEmpty())
+    {
+        QMessageBox::warning(0, tr("选择好友"), tr(" 请先选择文件接收方! "), QMessageBox::Ok);
+        return;
+    }
+    myfsrv->show();
+}
+
+void MyQQ::recvFileName(QString name, QString hostip, QString rmtname, QString filename)
+{
+    if(myname == rmtname)
+    {
+        int result= QMessageBox::information(this, tr(" 收到文件"), tr(" 好友号 %1 给您发文件： \r\n 2, 是否接收? ")
+                                             .arg(name).arg(filename), QMessageBox::Yes, QMessageBox::No);
+        if(result == QMessageBox::Yes)
+        {
+            QString fname = QFileDialog::getSaveFileName(0, tr ("保存"),filename);
+            if (!fname. isEmpty ())
+            {
+                FileCntDlg *fcnt = new FileCntDlg();
+                fcnt->getLocPath(fname);
+                fcnt->getSrvAddr(QHostAddress(hostip));
+                fcnt->show();
+            }
+        }
+        else
+        {
+            sendChatMsg(RefFile, name);
+        }
+    }
 }

@@ -9,9 +9,13 @@
 #include <QDateTime>                            // 时间日期库
 #include <QFile>                                // 系统文件类库
 #include <QFileDialog>                          // 文件对话框库
+
+#include "filecntdlg.h"
 #include "filesrvdlg.h"
 
 class FileSrvDlg;
+class FileCntDlg;
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyQQ; }
@@ -41,8 +45,8 @@ private slots:
     void on_sendPushButton_clicked();                   // "发送”按钮的单击事件方法
     void recvAndProcessChatMsg();                       // 接收并处理 UDP 数据报
     void on_searchPushButton_clicked();                 // 搜索线上所有用户
-    // void getSfileName(QString);
-    // void on_transPushButton_clicked();
+    void getSfileName(QString);
+    void on_transPushButton_clicked();
 
 private:
     Ui::MyQQ *ui;

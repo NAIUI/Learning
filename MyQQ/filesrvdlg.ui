@@ -169,7 +169,7 @@
     <string>停 止</string>
    </property>
   </widget>
-  <widget class="QProgressBar" name="progressBar">
+  <widget class="QProgressBar" name="sendProgressBar">
    <property name="geometry">
     <rect>
      <x>100</x>
