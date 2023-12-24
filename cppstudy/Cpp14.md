@@ -97,27 +97,27 @@ auto sum(int i) {
 }
 ```
 
-### lambda参数auto
+### 2、lambda参数auto
 
 在C++11中，lambda表达式参数需要使用具体的类型声明：
 
-```text
+```C++
 auto f = [] (int a) { return a; }
 ```
 
 在C++14中，对此进行优化，lambda表达式参数可以直接是auto：
 
-```text
+```C++
 auto f = [] (auto a) { return a; };
 cout << f(1) << endl;
 cout << f(2.3f) << endl;
 ```
 
-### 变量模板
+### 3、变量模板
 
 C++14支持变量模板：
 
-```text
+```C++
 template<class T>
 constexpr T pi = T(3.1415926535897932385L);
 
@@ -128,11 +128,11 @@ int main() {
 }
 ```
 
-### 别名模板
+### 4、别名模板
 
 C++14也支持别名模板：
 
-```text
+```c++
 template<typename T, typename U>
 struct A {
     T t;
@@ -152,13 +152,13 @@ int main() {
 }
 ```
 
-### constexpr的限制
+### 5、constexpr的限制
 
 C++14相较于C++11对constexpr减少了一些限制：
 
-）C++11中constexpr函数可以使用递归，在C++14中可以使用局部变量和循环
+C++11中constexpr函数可以使用递归，在C++14中可以使用局部变量和循环
 
-```text
+```c++
 constexpr int factorial(int n) { // C++14 和 C++11均可
     return n <= 1 ? 1 : (n * factorial(n - 1));
 }
@@ -166,7 +166,7 @@ constexpr int factorial(int n) { // C++14 和 C++11均可
 
 在C++14中可以这样做：
 
-```text
+```c++
 constexpr int factorial(int n) { // C++11中不可，C++14中可以
     int ret = 0;
     for (int i = 0; i < n; ++i) {
@@ -176,9 +176,9 @@ constexpr int factorial(int n) { // C++11中不可，C++14中可以
 }
 ```
 
-）C++11中constexpr函数必须必须把所有东西都放在一个单独的return语句中，而constexpr则无此限制：
+C++11中constexpr函数必须必须把所有东西都放在一个单独的return语句中，而constexpr则无此限制：
 
-```text
+```c++
 constexpr int func(bool flag) { // C++14 和 C++11均可
     return 0;
 }
@@ -186,18 +186,18 @@ constexpr int func(bool flag) { // C++14 和 C++11均可
 
 在C++14中可以这样：
 
-```text
+```c++
 constexpr int func(bool flag) { // C++11中不可，C++14中可以
     if (flag) return 1;
     else return 0;
 }
 ```
 
-### [[`deprecated`]]标记
+### 6、[[`deprecated`]]标记
 
 C++14中增加了deprecated标记，修饰类、变、函数等，当程序中使用到了被其修饰的代码时，编译时被产生警告，用户提示开发者该标记修饰的内容将来可能会被丢弃，尽量不要使用。
 
-```text
+```c++
 struct [[deprecated]] A { };
 
 int main() {
@@ -208,7 +208,7 @@ int main() {
 
 当编译时，会出现如下警告：
 
-```text
+```C++
 ~/test$ g++ test.cc -std=c++14
 test.cc: In function ‘int main()’:
 test.cc:11:7: warning: ‘A’ is deprecated [-Wdeprecated-declarations]
@@ -218,31 +218,31 @@ test.cc:6:23: note: declared here
  struct [[deprecated]] A {
 ```
 
-### 二进制字面量与整形字面量分隔符
+### 7、二进制字面量与整形字面量分隔符
 
 C++14引入了二进制字面量，也引入了分隔符，防止看起来眼花哈~
 
-```text
+```c++
 int a = 0b0001'0011'1010;
 double b = 3.14'1234'1234'1234;
 ```
 
-### std::make_unique
+### 8、std::make_unique
 
-我们都知道C++11中有std::make_shared，却没有std::make_unique，在C++14已经改善。
+我们都知道C++11中有`std::make_shared`，却没有`std::make_unique`，在C++14已经改善。
 
-```text
+```C++
 struct A {};
 std::unique_ptr<A> ptr = std::make_unique<A>();
 ```
 
-### std::shared_timed_mutex与std::shared_lock
+### 9、std::shared_timed_mutex与std::shared_lock
 
-C++14通过std::shared_timed_mutex和std::shared_lock来实现读写锁，保证多个线程可以同时读，但是写线程必须独立运行，写操作不可以同时和读操作一起进行。
+C++14通过`std::shared_timed_mutex`和`std::shared_lock`来实现读写锁，保证多个线程可以同时读，但是写线程必须独立运行，写操作不可以同时和读操作一起进行。
 
 实现方式如下：
 
-```text
+```C++
 struct ThreadSafe {
     mutable std::shared_timed_mutex mutex_;
     int value_;
@@ -265,9 +265,9 @@ struct ThreadSafe {
 
 为什么是timed的锁呢，因为可以带超时时间，具体可以自行查询相关资料哈，网上有很多。
 
-### std::integer_sequence
+### 10、std::integer_sequence
 
-```text
+```C++
 template<typename T, T... ints>
 void print_sequence(std::integer_sequence<T, ints...> int_seq)
 {
@@ -284,9 +284,9 @@ int main() {
 输出：7 9 2 5 1 9 1 6
 ```
 
-std::integer_sequence和std::tuple的配合使用：
+`std::integer_sequence`和`std::tuple`的配合使用：
 
-```text
+```C++
 template <std::size_t... Is, typename F, typename T>
 auto map_filter_tuple(F f, T& t) {
     return std::make_tuple(f(std::get<Is>(t))...);
@@ -303,11 +303,11 @@ auto map_filter_tuple(F&& f, T& t) {
 }
 ```
 
-### std::exchange
+### 11、std::exchange
 
 直接看代码吧：
 
-```text
+```C++
 int main() {
     std::vector<int> v;
     std::exchange(v, {1,2,3,4});
@@ -323,7 +323,7 @@ int main() {
 
 可以看下exchange的实现：
 
-```text
+```C++
 template<class T, class U = T>
 constexpr T exchange(T& obj, U&& new_value) {
     T old_value = std::move(obj);
@@ -334,11 +334,11 @@ constexpr T exchange(T& obj, U&& new_value) {
 
 可以看见new_value的值给了obj，而没有对new_value赋值，这里相信您已经知道了它和swap的区别了吧！
 
-### std::quoted
+### 12、std::quoted
 
 C++14引入std::quoted用于给字符串添加双引号，直接看代码：
 
-```text
+```C++
 int main() {
     string str = "hello world";
     cout << str << endl;
@@ -349,13 +349,12 @@ int main() {
 
 编译&输出：
 
-```text
+```C++
 ~/test$ g++ test.cc -std=c++14
 ~/test$ ./a.out
 hello world
 "hello world"
 ```
-
 
 ## 参考
 
