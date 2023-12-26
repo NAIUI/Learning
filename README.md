@@ -2,12 +2,14 @@
 
 记录学习过程中的笔记，方便复习查看，分模块进行记录
 
-[toc]
-
 ## C/C++
 
 * C++新特性了解一下([C++11](./Language/Cpp11.md)、[C++14](./Language/Cpp14.md)、[C++17](./Language/Cpp17.md)、[C++20](./Language/Cpp20.md))
 * [C++面试八股一文总结](./Language/C++.md)
+
+## 设计模式
+
+[23种设计模式大全](./Design-Patterns/设计模式认识.md)
 
 ## 操作系统
 
