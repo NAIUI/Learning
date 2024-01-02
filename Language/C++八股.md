@@ -491,6 +491,8 @@ typedef static int INT_STATIC;
 3. define是在预处理阶段对所定义的常量进行替换展开；enum是程序运行时起作用；
 4. 枚举常量具有类型，但宏没有类型；
 
+---
+
 # C++面向对象
 
 ## 1、简述一下什么是面向对象
@@ -520,7 +522,6 @@ typedef static int INT_STATIC;
 - 参数的区别：隐藏函数和被隐藏的函数的参数列表可以相同，也可不同，但是函数名肯定要相同。当参数不相同时，无论基类中的函数是否被virtual 修饰，基类的函数都是被隐藏，而不是被重写。
 
 **「注意」**：虽然重载和覆盖都是实现多态的基础，但是两者实现的技术完全不相同，达到的目的也是完 全不同的，覆盖是动态态绑定的多态，而重载是静态绑定的多态。C++ 的重载和重写是如何实现的
-
 
 ## 4、C++ 的重载和重写是如何实现的
 
@@ -660,14 +661,34 @@ Empty& operator = (const Empty& copy)
 }
 ```
 
+## 8、C++ 类对象的初始化顺序，有多重继承情况下的顺序
 
-## ================================
+1. 创建派生类的对象，基类的构造函数优先被调用（也优先于派生类里的成员类）；
+2. 如果类里面有成员类，成员类的构造函数优先被调用；(也优先于该类本身的构造函数）
+3. 基类构造函数如果有多个基类，则构造函数的调用顺序是某类在类派生表中出现的顺序而不是它们在成员初始化表中的顺序；
+4. 成员类对象构造函数如果有多个成员类对象，则构造函数的调用顺序是对象在类中被声明的顺序而不是它们出现在成员初始化表中的顺序；
+5. 派生类构造函数，作为一般规则派生类构造函数应该不能直接向一个基类数据成员赋值而是把值传递给适当的基类构造函数,否则两个类的实现变成紧耦合的（tightly coupled）将更加难于正确地修改或扩展基类的实现。（基类设计者的责任是提供一组适当的基类构造函数）
+6. 综上可以得出，初始化顺序：父类构造函数–>成员类对象构造函数–>自身构造函数。其中成员变量的初始化与声明顺序有关，构造函数的调用顺序是类派生列表中的顺序。
+7. 析构顺序和构造顺序相反。
 
-## 3、public、protected、private
+## 9、简述下向上转型和向下转型
 
-控制成员变量和成员函数的访问权限，它们分别表示公有的、受保护的、私有的，被称为成员访问限定符。在类的内部（定义类的代码内部），无论成员被声明为 public、protected 还是 private，都是可以互相访问的，没有访问权限的限制。在类的外部（定义类的代码之外），只能通过对象访问成员，并且通过对象只能访问 public 属性的成员，不能访问 private、protected 属性的成员。
+1. 子类转换为父类：向上转型，使用dynamic_cast<type_id>(expression)，这种转换相对来说比较安全不会有数据的丢失；
+2. 父类转换为子类：向下转型，可以使用强制转换，这种转换时不安全的，会导致数据的丢失，原因是父类的指针或者引用的内存中可能不包含子类的成员的内存。
 
-## 4、多态分几种
+## 10、浅拷贝和深拷贝的区别
+
+浅拷贝和深拷贝其实是针对拷贝对象是否存在指针成员的情况而言的，当存在指针成员而且浅拷贝发生，就会使得指针被拷贝一份但指针指向内容没有拷贝，也就是它们指向的内容是同一份，会存在内存释放时造成内存泄漏的风险，而两个对象被释放也会因为两次调用delete，而实际指向内容只有一份而程序崩溃，另外这样也会出现竞争。深拷贝就是基于这种情况，把指针指向的内容也拷贝了一份，一个类要实现深拷贝就要实现拷贝构造函数。
+
+## 11、类继承时，派生类对不同关键字修饰的基类方法的访问权限
+
+类中的成员可以分为三种类型，分别为public成员、protected成员、public成员。类中可以直接访问自己类的public、protected、private成员，但类对象只能访问自己类的public成员。
+
+1. public继承：派生类可以访问基类的public、protected成员，不可以访问基类的private成员； 派生类对象可以访问基类的public成员，不可以访问基类的protected、private成员。
+2. protected继承：派生类可以访问基类的public、protected成员，不可以访问基类的private成员； 派生类对象不可以访问基类的public、protected、private成员。
+3. private继承：派生类可以访问基类的public、protected成员，不可以访问基类的private成员； 派生类对象不可以访问基类的public、protected、private成员。
+
+## 12、多态分几种
 
 多态分两种，一种是静态多态，一种是动态多态，
 
@@ -675,11 +696,11 @@ Empty& operator = (const Empty& copy)
 
 动态多态则是运行时确定的关系，实现机制是虚函数，一个声明定义了虚函数的基类，它的子类重写了该虚函数，这样一份基类指针，在可以指向父类也可以指向子类的情况下，调用该虚函数，根据指针实际指向的对象可以呈现不同的响应，这种实现就被称为动态多态。
 
-## 4、动态绑定是如何实现的？
+## 13、动态绑定是如何实现的？
 
 当编译器发现类中有虚函数时，会创建一张虚函数表，把虚函数的函数入口地址放到虚函数表中，并且在对象中增加一个指针 `vptr`，用于指向类的虚函数表。当派生类覆盖基类的虚函数时，会将虚函数表中对应的指针进行替换，从而调用派生类中覆盖后的虚函数，从而实现动态绑定。
 
-## 5、动态多态有什么作用？有哪些必要条件？
+## 14、动态多态有什么作用？有哪些必要条件？
 
 动态多态的作用：
 
@@ -692,22 +713,190 @@ Empty& operator = (const Empty& copy)
 2. 需要有虚函数覆盖；
 3. 需要有基类指针/引用指向子类对象
 
-## 6、纯虚函数有什么作用？如何实现？
+## 15、简述一下移动构造函数，什么库用到了这个函数？
+
+C++11中新增了移动构造函数。与拷贝类似，移动也使用一个对象的值设置另一个对象的值。但是，又与拷贝不同的是，移动实现的是对象值真实的转移（源对象到目的对象）：源对象将丢失其内容，其内容将被目的对象占有。移动操作的发生的时候，是当移动值的对象是未命名的对象的时候。这里未命名的对象就是那些临时变量，甚至都不会有名称。典型的未命名对象就是函数的返回值或者类型转换的对象。使用临时对象的值初始化另一个对象值，不会要求对对象的复制：因为临时对象不会有其它使用，因而，它的值可以被移动到目的对象。做到这些，就要使用移动构造函数和移动赋值：当使用一个临时变量对对象进行构造初始化的时候，调用移动构造函数。类似的，使用未命名的变量的值赋给一个对象时，调用移动赋值操作。
+
+移动操作的概念对对象管理它们使用的存储空间很有用的，诸如对象使用new和delete分配内存的时候。在这类对象中，拷贝和移动是不同的操作：从A拷贝到B意味着，B分配了新内存，A的整个内容被拷贝到为B分配的新内存上。 而从A移动到B意味着分配给A的内存转移给了B，没有分配新的内存，它仅仅包含简单地拷贝指针。 看下面的例子：
+
+```C++
+// 移动构造函数和赋值
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Example6 {
+    string* ptr;
+public:
+    Example6 (const string& str) : ptr(new string(str)) {}
+    ~Example6 () {delete ptr;}
+    // 移动构造函数，参数x不能是const Pointer&& x，
+    // 因为要改变x的成员数据的值；
+    // C++98不支持，C++0x（C++11）支持
+    Example6 (Example6&& x) : ptr(x.ptr) 
+    {
+        x.ptr = nullptr;
+    }
+    // move assignment
+    Example6& operator= (Example6&& x) 
+    {
+        delete ptr; 
+        ptr = x.ptr;
+        x.ptr=nullptr;
+        return *this;
+    }
+    // access content:
+    const string& content() const {return *ptr;}
+    // addition:
+    Example6 operator+(const Example6& rhs) 
+    {
+        return Example6(content()+rhs.content());
+    }
+};
+int main () {
+    Example6 foo("Exam");           // 构造函数
+    // Example6 bar = Example6("ple"); // 拷贝构造函数
+    Example6 bar(move(foo));     // 移动构造函数
+                                // 调用move之后，foo变为一个右值引用变量，
+                                // 此时，foo所指向的字符串已经被"掏空"，
+                                // 所以此时不能再调用foo
+    bar = bar+ bar;             // 移动赋值，在这儿"="号右边的加法操作，
+                                // 产生一个临时值，即一个右值
+                                 // 所以此时调用移动赋值语句
+    cout << "foo's content: " << foo.content() << '\n';
+    return 0;
+}
+
+```
+
+执行结果：
+
+```
+foo's content: Example
+```
+
+## 16、C++ 类内可以定义引用数据成员吗？
+
+c++类内可以定义引用成员变量，但要遵循以下三个规则：
+
+1. 不能用默认构造函数初始化，必须提供构造函数来初始化引用成员变量。否则会造成引用未初始化错误。
+2. 构造函数的形参也必须是引用类型。
+3. 不能在构造函数里初始化，必须在初始化列表中进行初始化。
+
+## 17、简述一下什么是常函数，有什么作用
+
+类的成员函数后面加 const，表明这个函数不会对这个类对象的数据成员（准确地说是非静态数据成员）作任何改变。在设计类的时候，一个原则就是对于不改变数据成员的成员函数都要在后面加const，而对于改变数据成员的成员函数不能加 const。所以 const 关键字对成员函数的行为作了更明确的限定：有 const 修饰的成员函数（指 const 放在函数参数表的后面，而不是在函数前面或者参数表内），只能读取数据成员，不能改变数据成员；没有 const 修饰的成员函数，对数据成员则是可读可写的。除此之外，在类的成员函数后面加 const 还有什么好处呢？那就是常量（即 const）对象可以调用 const 成员函数，而不能调用非const修饰的函数。正如非const类型的数据可以给const类型的变量赋值一样，反之则不成立。
+
+```C++
+#include<iostream>
+using namespace std;
+ 
+class CStu
+{
+public:
+    int a;
+    CStu()
+    {
+        a = 12;
+    }
+ 
+    void Show() const
+    {
+        //a = 13; //常函数不能修改数据成员
+        cout <<a << "I am show()" << endl;
+    }
+};
+ 
+int main()
+{
+    CStu st;
+    st.Show();
+    system("pause");
+    return 0;
+}
+```
+
+## 18、说说什么是虚继承，解决什么问题，如何实现？
+
+虚继承是解决C++多重继承问题的一种手段，从不同途径继承来的同一基类，会在子类中存在多份拷贝。这将存在两个问题：其一，浪费存储空间；第二，存在二义性问题，通常可以将派生类对象的地址赋值给基类对象，实现的具体方式是，将基类指针指向继承类（继承类有基类的拷贝）中的基类对象的地址，但是多重继承可能存在一个基类的多份拷贝，这就出现了二义性。虚继承可以解决多种继承前面提到的两个问题
+
+```C++
+#include<iostream>
+using namespace std;
+class A{
+public:
+    int _a;
+};
+class B :virtual public A
+{
+public:
+    int _b;
+};
+class C :virtual public A
+{
+public:
+    int _c;
+};
+class D :public B, public C
+{
+public:
+    int _d;
+};
+//菱形继承和菱形虚继承的对象模型
+int main()
+{
+    D d;
+    d.B::_a = 1;
+    d.C::_a = 2;
+    d._b = 3;
+    d._c = 4;
+    d._d = 5;
+    cout << sizeof(D) << endl;
+    return 0;
+}
+```
+
+分别从菱形继承和虚继承来分析：![img](./image/继承.png)
+
+菱形继承中A在B,C,D,中各有一份，虚继承中，A共享。
+
+上面的虚继承表实际上是一个指针数组。B、C实际上是虚基表指针，指向虚基表。
+
+虚基表：存放相对偏移量，用来找虚基类
+
+## 19、多继承存在什么问题？如何消除多继承中的二义性？
+
+1. 增加程序的复杂度，使得程序的编写和维护比较困难，容易出错；
+2. 在继承时，基类之间或基类与派生类之间发生成员同名时，将出现对成员访问的不确定性，即同名二义性；
+
+   消除同名二义性的方法：
+
+- 利用作用域运算符 `::`，用于限定派生类使用的是哪个基类的成员；
+- 在派生类中定义同名成员，覆盖基类中的相关成员；
+
+1. 当派生类从多个基类派生，而这些基类又从同一个基类派生，则在访问此共同基类的成员时，将产生另一种不确定性，即路径二义性；
+
+   消除路径二义性的方法：
+
+- 消除同名二义性的两种方法都可以；
+- 使用虚继承，使得不同路径继承来的同名成员在内存中只有一份拷贝。
+
+## 20、纯虚函数有什么作用？如何实现？
 
 1. 定义纯虚函数是为了实现一个接口，起到规范的作用，想要继承这个类就必须覆盖该函数。
 2. 实现方式是在虚函数声明的结尾加上 `= 0`即可。
 
-## 7、虚函数表是针对类的还是针对对象的？同一个类的两个对象的虚函数表是怎么维护的？
+## 21、虚函数表是针对类的还是针对对象的？同一个类的两个对象的虚函数表是怎么维护的？
 
 虚函数表是针对类的，类的所有对象共享这个类的虚函数表，因为每个对象内部都保存一个指向该类虚函数表的指针 `vptr`，每个对象的 `vptr`的存放地址都不同，但都指向同一虚函数表。
 
-## 8、c++中虚函数和纯虚函数的区别
+## 22、c++中虚函数和纯虚函数的区别
 
 首先，虚函数是类中用virtual进行修饰的成员函数，而纯虚函数则是更进一步在虚函数的基础上，给成员函数添加"=0"的标识的虚函数，这是声明时的区别。另外，虚函数是用来实现动态绑定的一个c++的特色，基类声明了虚函数，继承了该基类的子类重写了该虚函数，在声明了一个基类指针的情况下调用该虚函数，其根据其指向的实际对象是子类对象还是基类对象，虚函数呈现不同的响应，这就是c++的动态多态，需要注意的是，如果不是通过指针，而是简单的普通对象，那就没有动态绑定的特性的呈现。
 
 纯虚函数，则是另外的标识，声明了纯虚函数的类就是抽象类，是没有具体对象的特殊类，声明了就为了继承，产生不同的类，从而展现不同的特性。就好比书这个类，可以派生出哲学书、历史书、教科书和技工书种等类，但它本身不应该产生实际对象，在这个意义上，这情况就该实现抽象类然后使用纯虚函数。
 
-## 9、c++中哪些函数不能声明为虚函数
+## 23、c++中哪些函数不能声明为虚函数
 
 1. 普通函数，因为虚函数的动态绑定是基于类的概念的，声明普通函数为虚函数也没什么意义，编译器没有这方面的优化规则；
 2. 构造函数，构造函数是为了初始化对象而制作的，虚函数是为了对象基于某个信息产生不同响应而制作的，两者目的不一样，编译器就不会给这方面的实现；
@@ -719,7 +908,7 @@ Empty& operator = (const Empty& copy)
 4. 静态成员函数，静态成员函数对于类来说是独一份的，没有动态绑定的需要；
 5. 友元函数，c++不支持友元的继承，另外友元函数不算类的成员函数，所以没办法。
 
-## 10、为什么基类的析构函数需要定义为虚函数？
+## 24、为什么基类的析构函数需要定义为虚函数？
 
 为了实现动态绑定，基类指针指向派生类对象，如果析构函数不是虚函数，那么在对象销毁时，就会调用基类的析构函数，只能销毁派生类对象中的部分数据，所以必须将析构函数定义为虚函数，从而在对象销毁时，调用派生类的析构函数，从而销毁派生类对象中的所有数据。
 
@@ -801,42 +990,25 @@ int main()
 //Parent destructor function
 ```
 
-## 11、构造函数和析构函数能抛出异常吗？
+## 25、构造函数和析构函数能抛出异常吗？
 
 1. 从语法的角度来说，构造函数可以抛出异常，但从逻辑和风险控制的角度来说，尽量不要抛出异常，否则可能导致内存泄漏。
 2. 析构函数不可以抛出异常，如果析构函数抛出异常，则异常点之后的程序，比如释放内存等操作，就不会被执行，从而造成内存泄露的问题；而且当异常发生时，C++通常会调用对象的析构函数来释放资源，如果此时析构函数也抛出异常，即前一个异常未处理又出现了新的异常，从而造成程序崩溃的问题。
 
-## 12、如何让一个类不能实例化？
+## 26、如何让一个类不能实例化？
 
 将类定义为抽象类（也就是存在纯虚函数）或者将构造函数声明为 `private`。
 
-## 13、多继承存在什么问题？如何消除多继承中的二义性？
-
-1. 增加程序的复杂度，使得程序的编写和维护比较困难，容易出错；
-2. 在继承时，基类之间或基类与派生类之间发生成员同名时，将出现对成员访问的不确定性，即同名二义性；
-
-   消除同名二义性的方法：
-
-- 利用作用域运算符 `::`，用于限定派生类使用的是哪个基类的成员；
-- 在派生类中定义同名成员，覆盖基类中的相关成员；
-
-1. 当派生类从多个基类派生，而这些基类又从同一个基类派生，则在访问此共同基类的成员时，将产生另一种不确定性，即路径二义性；
-
-   消除路径二义性的方法：
-
-- 消除同名二义性的两种方法都可以；
-- 使用虚继承，使得不同路径继承来的同名成员在内存中只有一份拷贝。
-
-## 14、如果类A是一个空类，那么sizeof(A)的值为多少？
+## 27、如果类A是一个空类，那么sizeof(A)的值为多少？
 
 一个空类可以被实例化，每个实例在内存中都是有地址的，编译器会给空类隐式添加一字节；一个空类会包含默认构造、默认拷贝、默认析构、默认赋值、默认取址、默认const取址。
 
-## 15、覆盖和重载之间有什么区别？
+## 28、覆盖和重载之间有什么区别？
 
 1. 覆盖是指派生类中重新定义的函数，其函数名、参数列表、返回类型与父类完全相同，只是函数体存在区别；覆盖只发生在类的成员函数中；
 2. 重载是指两个函数具有相同的函数名，不同的参数列表，不关心返回值；当调用函数时，根据传递的参数列表来判断调用哪个函数；重载可以是类的成员函数，也可以是普通函数。
 
-## 16、拷贝构造函数和赋值运算符重载之间有什么区别？
+## 29、拷贝构造函数和赋值运算符重载之间有什么区别？
 
 1. 拷贝构造函数用于构造新的对象；
 
@@ -855,7 +1027,15 @@ int main()
 
 一般情况下，类中包含指针变量时需要重载拷贝构造函数、赋值运算符和析构函数。
 
-## 17、四种类型转换
+## 30、拷贝构造函数的参数是什么传递方式，为什么
+
+**参考回答**
+
+1. 拷贝构造函数的参数必须使用引用传递
+2. 如果拷贝构造函数中的参数不是一个引用，即形如CClass(const CClass c_class)，那么就相当于采用了传值的方式(pass-by-value)，而传值的方式会调用该类的拷贝构造函数，从而造成无穷递归地调用拷贝构造函数。因此拷贝构造函数的参数必须是一个引用。
+   需要澄清的是，传指针其实也是传值，如果上面的拷贝构造函数写成CClass(const CClass* c_class)，也是不行的。事实上，只有传引用不是传值外，其他所有的传递方式都是传值。
+
+## 31、四种类型转换
 
 1. static_cast：用于良性转换，没有运行时类型检查来保证转换的安全性，一般不会导致意外发生，风险很低。常用于基本类型转换到 void，转换父类指针到子类不安全；
 2. const_cast：一般用于去掉const属性以及volatile，但是如果原来他就是常量去掉之后千万不要修改；比如你手里有一个常量指针引用，但是函数接口是非常量指针，可能需要转换一下；成员函数声明为const，你想用this去执行一个函数，也需要用const_cast；
@@ -989,12 +1169,66 @@ int main()
 
    从输出结果可以看出，在进行下行转换时，dynamic_cast安全的，如果下行转换不安全的话其会返回空指针，这样在进行操作的时候可以预先判断。而使用static_cast下行转换存在不安全的情况也可以转换成功，但是直接使用转换后的对象进行操作容易造成错误。
 
-## 18、运行时类型信息(RTTI)
+## 32、仿函数了解吗？有什么作用
+
+**参考回答**
+
+1. 仿函数（functor）又称为函数对象（function object）是一个能行使函数功能的类。仿函数的语法几乎和我们普通的函数调用一样，不过作为仿函数的类，都必须重载operator()运算符，举个例子：
+
+```
+class Func{
+public:
+    void operator() (const string& str) const {
+        cout<<str<<endl;
+    }
+};
+
+Func myFunc;
+myFunc("helloworld!");
+
+>>>helloworld!
+
+```
+
+1. 仿函数既能想普通函数一样传入给定数量的参数，还能存储或者处理更多我们需要的有用信息。我们可以举个例子：
+   假设有一个vector `<string>`，你的任务是统计长度小于5的string的个数，如果使用count_if函数的话，你的代码可能长成这样：
+
+   ```
+    bool LengthIsLessThanFive(const string& str) {
+        return str.length()<5;  
+    }
+    int res=count_if(vec.begin(), vec.end(), LengthIsLessThanFive);
+
+   ```
+
+   其中count_if函数的第三个参数是一个函数指针，返回一个bool类型的值。一般的，如果需要将特定的阈值长度也传入的话，我们可能将函数写成这样：
+
+   ```
+    bool LenthIsLessThan(const string& str, int len) {
+        return str.length()<len;
+    }
+   ```
+
+   这个函数看起来比前面一个版本更具有一般性，但是他不能满足count_if函数的参数要求：count_if要求的是unary function（仅带有一个参数）作为它的最后一个参数。如果我们使用仿函数，是不是就豁然开朗了呢：
+
+   ```
+    class ShorterThan {
+    public:
+        explicit ShorterThan(int maxLength) : length(maxLength) {}
+        bool operator() (const string& str) const {
+            return str.length() < length;
+        }
+    private:
+        const int length;
+    };
+   ```
+
+## 33、运行时类型信息(RTTI)
 
 1. typeid，可以在运行时确定对象类型，返回一个type_info对象的引用，只获取对象的实际类型；
 2. type_info，一个类，用来描述编译器在程序中生成的类型信息，可以有效存储指向 类型名 的指针。
 
-## 19、模板函数和模板类的特例化
+## 34、模板函数和模板类的特例化
 
 编写单一的模板，它能适应多种类型的需求，使每种类型都具有相同的功能，但对于某种特定类型，如果要实现其特有的功能，单一模板就无法做到，这时就需要模板特例化
 
@@ -1068,17 +1302,21 @@ fi.Bar();//特例化版本，执行Foo<int>::Bar()
 //Foo<string>::Bar()和Foo<int>::Bar()功能不同
 ```
 
-## 21、C++ 模板
+## 35、C++ 模板
 
 模板是泛型编程的基础，泛型编程即以一种独立于任何特定类型的方式编写代码。模板是创建泛型类或函数的蓝图或公式。库容器，比如迭代器和算法，都是泛型编程的例子，它们都使用了模板的概念。每个容器都有一个单一的定义，比如 向量，我们可以定义许多不同类型的向量，比如 vector `<int>` 或 vector `<string>`。
 
-## 22、c++中类模板和模板类的区别
+## 36、c++中类模板和模板类的区别
 
 类模板，template提前修饰，不明确定义其数据成员、成员函数的参数和返回值，这种类是一个模板，可以传入任意符合要求的类型，最后实例化成一个具体的类；模板类就是类模板实例化后的具体类，就好比一个类模板是做糕点的模具，模板类就是做出来的搞点。
+
+---
 
 # C++STL
 
 ## 1、什么是C++ STL？
+
+标准模板库（Standard Template Library,简称STL）简单说，就是一些常用数据结构和算法的模板的集合。
 
 C++ STL从广义来讲包括了三类：算法，容器和迭代器。
 
@@ -1086,7 +1324,321 @@ C++ STL从广义来讲包括了三类：算法，容器和迭代器。
 2. 容器就是数据的存放形式，包括序列式容器和关联式容器，序列式容器就是list，vector等，关联式容器就是set，map等。
 3. 迭代器就是在不暴露容器内部结构的情况下对容器的遍历。
 
-## 2、什么时候需要用hash_map，什么时候需要用map?
+**详细的说**，STL由6部分组成：容器(Container)、算法（Algorithm）、 迭代器（Iterator）、仿函数（Function object）、适配器（Adaptor）、空间配制器（Allocator）。
+
+1. 容器(Container)是一种数据结构， 如list, vector, 和deques，以模板类的方法提供。为了访问容器中的数据，可以使用由容器类输出的迭代器。
+2. 算法（Algorithm）
+   是用来操作容器中的数据的模板函数。例如，STL用sort()来对一 个vector中的数据进行排序，用find()来搜索一个list中的对象， 函数本身与他们操作的数据的结构和类型无关，因此他们可以用于从简单数组到高度复杂容器的任何数据结构上。
+3. 迭代器（Iterator）
+   提供了访问容器中对象的方法。例如，可以使用一对迭代器指定list或vector中的一定范围的对象。 迭代器就如同一个指针。事实上，C++ 的指针也是一种迭代器。 但是，迭代器也可以是那些定义了operator*()以及其他类似于指针的操作符方法的类对象;
+4. 仿函数（Function object）
+   仿函数又称之为函数对象， 其实就是重载了操作符的struct,没有什么特别的地方。
+5. 适配器（Adaptor）
+   简单的说就是一种接口类，专门用来修改现有类的接口，提供一中新的接口；或调用现有的函数来实现所需要的功能。主要包括3中适配器Container Adaptor、Iterator Adaptor、Function Adaptor。
+6. 空间配制器（Allocator）
+   为STL提供空间配置的系统。其中主要工作包括两部分：
+   （1）对象的创建与销毁；
+   （2）内存的获取与释放。
+
+## 2、请说说 STL 中常见的容器，并介绍一下实现原理
+
+    容器可以用于存放各种类型的数据（基本类型的变量，对象等）的数据结构，都是模板类，分为顺序容器、关联式容器、容器适配器三种类型，三种类型容器特性分别如下：
+
+1. 顺序容器
+   容器并非排序的，元素的插入位置同元素的值无关。包含vector、deque、list，具体实现原理如下：
+   （1）vector    头文件 `<vector>`
+   动态数组。元素在内存连续存放。随机存取任何元素都能在常数时间完成。在尾端增删元素具有较佳的性能。
+   （2）deque    头文件 `<deque>`
+   双向队列。元素在内存连续存放。随机存取任何元素都能在常数时间完成（仅次于vector）。在两端增删元素具有较佳的性能（大部分情况下是常数时间）。
+   （3）list    头文件 `<list>`
+   双向链表。元素在内存不连续存放。在任何位置增删元素都能在常数时间完成。不支持随机存取。
+2. 关联式容器
+   元素是排序的；插入任何元素，都按相应的排序规则来确定其位置；在查找时具有非常好的性能；通常以平衡二叉树的方式实现。包含set、multiset、map、multimap，具体实现原理如下：
+   （1）set/multiset    头文件 `<set>`
+   set 即集合。set中不允许相同元素，multiset中允许存在相同元素。
+   （2）map/multimap    头文件 `<map>`
+   map与set的不同在于map中存放的元素有且仅有两个成员变，一个名为first,另一个名为second, map根据first值对元素从小到大排序，并可快速地根据first来检索元素。
+   **注意**：map同multimap的不同在于是否允许相同first值的元素。
+3. 容器适配器
+   封装了一些基本的容器，使之具备了新的函数功能，比如把deque封装一下变为一个具有stack功能的数据结构。这新得到的数据结构就叫适配器。包含stack,queue,priority_queue，具体实现原理如下：
+   （1）stack    头文件 `<stack>`
+   栈是项的有限序列，并满足序列中被删除、检索和修改的项只能是最进插入序列的项（栈顶的项）。后进先出。
+   （2）queue    头文件 `<queue>`
+   队列。插入只可以在尾部进行，删除、检索和修改只允许从头部进行。先进先出。
+   （3）priority_queue    头文件 `<queue>`
+   优先级队列。内部维持某种有序，然后确保优先级最高的元素总是位于头部。最高优先级元素总是第一个出列。
+
+## 3、说说 STL 中 map hashtable deque list 的实现原理
+
+    map、hashtable、deque、list实现机理分别为红黑树、函数映射、双向队列、双向链表，他们的特性分别如下：
+
+1. map实现原理
+   map内部实现了一个**红黑树**（红黑树是非严格平衡的二叉搜索树，而AVL是严格平衡二叉搜索树），红黑树有自动排序的功能，因此map内部所有元素都是有序的，红黑树的每一个节点都代表着map的一个元素。因此，对于map进行的查找、删除、添加等一系列的操作都相当于是对红黑树进行的操作。map中的元素是按照二叉树（又名二叉查找树、二叉排序树）存储的，特点就是左子树上所有节点的键值都小于根节点的键值，右子树所有节点的键值都大于根节点的键值。使用中序遍历可将键值按照从小到大遍历出来。
+2. hashtable（也称散列表，直译作哈希表）实现原理
+   hashtable采用了**函数映射的思想**记录的存储位置与记录的关键字关联起来，从而能够很快速地进行查找。这决定了哈希表特殊的数据结构，它同数组、链表以及二叉排序树等相比较有很明显的区别，它能够快速定位到想要查找的记录，而不是与表中存在的记录的关键字进行比较来进行查找。
+3. deque实现原理
+   deque内部实现的是一个**双向队列**。元素在内存连续存放。随机存取任何元素都在常数时间完成（仅次于vector）。所有适用于vector的操作都适用于deque。在两端增删元素具有较佳的性能（大部分情况下是常数时间）。
+4. list实现原理
+   list内部实现的是一个**双向链表**。元素在内存不连续存放。在任何位置增删元素都能在常数时间完成。不支持随机存取。无成员函数，给定一个下标i，访问第i个元素的内容，只能从头部挨个遍历到第i个元素。
+
+## 4、STL中内存分配器(allcation)原理
+
+内存分配器有两层，第一层，分配大于128kb，直接用operator new，这就是一级内存分配器；第二层，小于128kb，使用二级内存分配器，即内存池。
+
+ 一般情况下,一个程序包括数据结构和相应的算法，而数据结构作为存储数据的组织形式，与内存空间有着密切的联系。在C++ STL中，空间配置器便是用来实现内存空间(一般是内存，也可以是硬盘等空间)分配的工具，他与容器联系紧密，每一种容器的空间分配都是通过空间分配器alloctor实现的。
+
+1. 两种C++类对象实例化方式的异同
+   在c++中，创建类对象一般分为两种方式：一种是直接利用构造函数,直接构造类对象，如 Test test()；另一种是通过new来实例化一个类对象，如 Test *pTest = new Test；那么，这两种方式有什么异同点呢？
+   我们知道，内存分配主要有三种方式：
+   （1） 静态存储区分配：内存在程序编译的时候已经分配好，这块内存在程序的整个运行空间内都存在。如全局变量,静态变量等。
+   （2） 栈空间分配：程序在运行期间，函数内的局部变量通过栈空间来分配存储（函数调用栈），当函数执行完毕返回时，相对应的栈空间被立即回收。主要是局部变量。 （3）堆空间分配：程序在运行期间，通过在堆空间上为数据分配存储空间，通过malloc和new创建的对象都是从堆空间分配内存，这类空间需要程序员自己来管理，必须通过free()或者是delete()函数对堆空间进行释放，否则会造成内存溢出。
+   那么，从**内存空间分配的角度**来对这两种方式的区别，就比较容易区分:
+   （1）对于第一种方式来说，是直接通过调用Test类的构造函数来实例化Test类对象的,如果该实例化对象是一个局部变量，则其是在栈空间分配相应的存储空间。 （2）对于第二种方式来说,就显得比较复杂。这里主要以new类对象来说明一下。new一个类对象,其实是执行了两步操作：首先,调用new在堆空间分配内存,然后调用类的构造函数构造对象的内容；同样，使用delete释放时，也是经历了两个步骤：首先调用类的析构函数释放类对象，然后调用delete释放堆空间。
+2. C++ STL空间配置器实现
+   很容易想象，为了实现空间配置器，完全可以利用new和delete函数并对其进行封装实现STL的空间配置器，的确可以这样。但是，为了最大化提升效率，SGI STL版本并没有简单的这样做，而是采取了一定的措施，实现了更加高效复杂的空间分配策略。由于以上的构造都分为两部分，所以，在SGI STL中，将对象的构造切分开来，分成空间配置和对象构造两部分。
+   内存配置操作: 通过alloc::allocate()实现         内存释放操作: 通过alloc::deallocate()实现         对象构造操作: 通过::construct()实现         对象释放操作: 通过::destroy()实现
+   关于内存空间的配置与释放，SGI STL采用了两级配置器：一级配置器主要是考虑大块内存空间，利用malloc和free实现；二级配置器主要是考虑小块内存空间而设计的（为了最大化解决内存碎片问题，进而提升效率），采用链表free_list来维护内存池（memory pool），free_list通过union结构实现，空闲的内存块互相挂接在一块，内存块一旦被使用，则被从链表中剔除，易于维护。
+
+## 5、STL 容器用过哪些，查找的时间复杂度是多少，为什么？
+
+1. vector
+   采用一维数组实现，元素在内存连续存放，不同操作的时间复杂度为：
+   插入: O(N)
+   查看: O(1)
+   删除: O(N)
+2. deque
+   采用双向队列实现，元素在内存连续存放，不同操作的时间复杂度为：
+   插入: O(N)
+   查看: O(1)
+   删除: O(N)
+3. list
+   采用双向链表实现，元素存放在堆中，不同操作的时间复杂度为：
+   插入: O(1)
+   查看: O(N)
+   删除: O(1)
+4. map、set、multimap、multiset
+   上述四种容器采用红黑树实现，红黑树是平衡二叉树的一种。不同操作的时间复杂度近似为:
+   插入: O(logN)
+   查看: O(logN)
+   删除: O(logN)
+5. unordered_map、unordered_set、unordered_multimap、 unordered_multiset
+   上述四种容器采用哈希表实现，不同操作的时间复杂度为： 插入: O(1)，最坏情况O(N)
+   查看: O(1)，最坏情况O(N)
+   删除: O(1)，最坏情况O(N)
+   **注意**：容器的时间复杂度取决于其底层实现方式。
+
+## 6、迭代器用过吗？什么时候会失效？
+
+1. 对于序列容器vector，deque来说，使用erase后，后边的每个元素的迭代器都会失效，后边每个元素都往前移动一位，erase返回下一个有效的迭代器。
+2. 对于关联容器map，set来说，使用了erase后，当前元素的迭代器失效，但是其结构是红黑树，删除当前元素，不会影响下一个元素的迭代器，所以在调用erase之前，记录下一个元素的迭代器即可。
+3. 对于list来说，它使用了不连续分配的内存，并且它的erase方法也会返回下一个有效的迭代器，因此上面两种方法都可以使用。
+
+## 7、说一下STL中迭代器的作用，有指针为何还要迭代器？
+
+1. 迭代器的作用
+   （1）用于指向顺序容器和关联容器中的元素
+   （2）通过迭代器可以读取它指向的元素
+   （3）通过非const迭代器还可以修改其指向的元素
+2. 迭代器和指针的区别
+   **迭代器不是指针，是类模板**，表现的像指针。他只是模拟了指针的一些功能，重载了指针的一些操作符，-->、++、--等。迭代器封装了指针，是一个”可遍历STL（ Standard Template Library）容器内全部或部分元素”的对象，**本质**是封装了原生指针，是指针概念的一种提升，提供了比指针更高级的行为，相当于一种智能指针，他可以根据不同类型的数据结构来实现不同的++，--等操作。
+   **迭代器返回的是对象引用而不是对象的值**，所以cout只能输出迭代器使用取值后的值而不能直接输出其自身。
+3. 迭代器产生的原因
+   Iterator类的访问方式就是把不同集合类的访问逻辑抽象出来，使得不用暴露集合内部的结构而达到循环遍历集合的效果。
+
+## 8、说说 STL 迭代器是怎么删除元素的
+
+    这是主要考察迭代器失效的问题。
+
+1. 对于序列容器vector，deque来说，使用erase后，后边的每个元素的迭代器都会失效，后边每个元素都往前移动一位，erase返回下一个有效的迭代器；
+2. 对于关联容器map，set来说，使用了erase后，当前元素的迭代器失效，但是其结构是红黑树，删除当前元素，不会影响下一个元素的迭代器，所以在调用erase之前，记录下一个元素的迭代器即可；
+3. 对于list来说，它使用了不连续分配的内存，并且它的erase方法也会返回下一个有效的迭代器，因此上面两种方法都可以使用。
+
+   容器上迭代器分类如下表（详细实现过程请翻阅相关资料详细了解）：
+
+| 容器           | 容器上的迭代器类别 |
+| -------------- | ------------------ |
+| vector         | 随机访问           |
+| deque          | 随机访问           |
+| list           | 双向               |
+| set/multiset   | 双向               |
+| map/multimap   | 双向               |
+| stack          | 不支持迭代器       |
+| queue          | 不支持迭代器       |
+| priority_queue | 不支持迭代器       |
+
+## 9、说说 STL 中 resize 和 reserve 的区别
+
+**参考回答**
+
+1. 首先必须弄清楚两个概念：
+   （1）capacity：该值在容器初始化时赋值，指的是容器能够容纳的最大的元素的个数。还不能通过下标等访问，因为此时容器中还没有创建任何对象。
+   （2）size：指的是此时容器中实际的元素个数。可以通过下标访问0-(size-1)范围内的对象。
+2. resize和reserve区别主要有以下几点：
+   （1）resize既分配了空间，也创建了对象；reserve表示容器预留空间，但并不是真正的创建对象，需要通过insert（）或push_back（）等创建对象。
+   （2）resize既修改capacity大小，也修改size大小；reserve只修改capacity大小，不修改size大小。
+   （3）两者的形参个数不一样。 resize带两个参数，一个表示容器大小，一个表示初始值（默认为0）；reserve只带一个参数，表示容器预留的大小。
+
+**答案解析**
+
+    **问题延伸：**
+
+    resize 和 reserve 既有差别，也有共同点。两个接口的**共同点**是**它们都保证了vector的空间大小(capacity)最少达到它的参数所指定的大小。**下面就他们的细节进行分析。
+
+    为实现resize的语义，resize接口做了两个保证：
+
+    （1）保证区间[0, new_size)范围内数据有效，如果下标index在此区间内，vector[indext]是合法的；
+
+    （2）保证区间[0, new_size)范围以外数据无效，如果下标index在区间外，vector[indext]是非法的。
+
+    reserve只是保证vector的空间大小(capacity)最少达到它的参数所指定的大小n。在区间[0, n)范围内，如果下标是index，vector[index]这种访问有可能是合法的，也有可能是非法的，视具体情况而定。
+
+    以下是两个接口的源代码：
+
+```C++
+void resize(size_type new_size) {   resize(new_size, T()); } 
+void resize(size_type new_size, const T& x) {  
+  if (new_size < size())  
+    erase(begin() + new_size, end()); // erase区间范围以外的数据，确保区间以外的数据无效  
+  else   
+    insert(end(), new_size - size(), x); // 填补区间范围内空缺的数据，确保区间内的数据有效 
+}   
+#include<iostream> 
+#include<vector> 
+using namespace std; 
+int main() {   
+  vector<int> a;   
+  cout<<"initial capacity:"<<a.capacity()<<endl;   
+  cout<<"initial size:"<<a.size()<<endl;      /*resize改变capacity和size*/   
+  a.resize(20);   
+  cout<<"resize capacity:"<<a.capacity()<<endl;   
+  cout<<"resize size:"<<a.size()<<endl;   
+  vector<int> b;     /*reserve改变capacity,不改变resize*/   
+  b.reserve(100);   
+  cout<<"reserve capacity:"<<b.capacity()<<endl;   
+  cout<<"reserve size:"<<b.size()<<endl;  
+  return 0; 
+}  /*  
+
+运行结果：   initial capacity:0  initial size:0  resize capacity:20  resize size:20  reserve capacity:100  reserve size:0 */ 
+```
+
+## 10、说说 STL 容器动态链接可能产生的问题？
+
+1. 可能产生 的问题
+   容器是一种动态分配内存空间的一个变量集合类型变量。在一般的程序函数里，局部容器，参数传递容器，参数传递容器的引用，参数传递容器指针都是可以正常运行的，而在动态链接库函数内部使用容器也是没有问题的，但是给动态库函数传递容器的对象本身，则会出现内存堆栈破坏的问题。
+2. 产生问题的原因 容器和动态链接库相互支持不够好，动态链接库函数中使用容器时，参数中只能传递容器的引用，并且要保证容器的大小不能超出初始大小，否则导致容器自动重新分配，就会出现内存堆栈破坏问题。
+
+## 11、简述 vector 的实现原理
+
+    vector底层实现原理为**一维数组**（元素在空间连续存放）。
+
+1. 新增元素
+   Vector通过一个连续的数组存放元素，如果集合已满，在新增数据的时候，就要分配一块更大的内存，将原来的数据复制过来，释放之前的内存，在插入新增的元素。插入新的数据分在最后插入push_back和通过迭代器在任何位置插入，这里说一下通过迭代器插入，通过迭代器与第一个元素的距离知道要插入的位置，即int index=iter-begin()。这个元素后面的所有元素都向后移动一个位置，在空出来的位置上存入新增的元素。
+
+   ```C++
+   //新增元素  
+   void insert(const_iterator iter,const T& t ) {   
+     int index=iter-begin();
+     if (index<size_) { 
+       if (size_==capacity_) { 
+         int capa=calculateCapacity(); 
+         newCapacity(capa); 
+       } 
+       memmove(buf+index+1,buf+index,(size_-index)*sizeof(T));  
+       buf[index]=t; size_++; 
+     }  
+   }
+   ```
+2. 删除元素
+   删除和新增差不多，也分两种，删除最后一个元素pop_back和通过迭代器删除任意一个元素erase(iter)。通过迭代器删除还是先找到要删除元素的位置，即int index=iter-begin();这个位置后面的每个元素都想前移动一个元素的位置。同时我们知道erase不释放内存只初始化成默认值。
+   删除全部元素clear：只是循环调用了erase，所以删除全部元素的时候，不释放内存。内存是在析构函数中释放的。
+
+   ```C++
+   //删除元素  
+   iterator erase(const_iterator iter) {     
+     int index=iter-begin();      
+     if (index<size_ && size_>0)     {         
+       memmove(buf+index ,buf+index+1,(size_-index)*sizeof(T));          
+       buf[--size_]=T();     
+     }      
+     return iterator(iter);  
+   } 
+   ```
+3. 迭代器iteraotr
+   迭代器iteraotr是STL的一个重要组成部分,通过iterator可以很方便的存储集合中的元素.STL为每个集合都写了一个迭代器, 迭代器其实是对一个指针的包装,实现一些常用的方法,如++,--,!=,==,*,->等, 通过这些方法可以找到当前元素或是别的元素. vector是STL集合中比较特殊的一个,因为vector中的每个元素都是连续的,所以在自己实现vector的时候可以用指针代替。
+
+   ```C++
+   //迭代器的实现 
+   template<class _Category,class _Ty,class _Diff = ptrdiff_t,class _Pointer = _Ty *,class _Reference = _Ty&> 
+   struct iterator {         
+   // base type for all iterator classes     
+   typedef _Category iterator_category;     
+   typedef _Ty value_type;     
+   typedef _Diff difference_type;     
+   typedef _Diff distance_type;    // retained     
+   typedef _Pointer pointer;     
+   typedef _Reference reference; 
+   };
+   ```
+4. vector实现源码
+
+   ```C++
+   #ifndef _CVECTOR_H_ #define _CVECTOR_H_  namespace cth {     
+   class NoCopy     {     
+   public:          
+   inline NoCopy(){}         
+   NoCopy(const NoCopy&);        
+    NoCopy& operator=(const NoCopy&);      
+   };    
+     template<typename T> 
+       class viterator:public std::iterator<std::forward_iterator_tag,T>  
+      {     
+   public:          
+   viterator()       
+     {          
+      t=NULL;    
+        }       
+     viterator(T* t_)      
+      {             t=t_;         }         viterator(const viterator& other)         {             t=other.t;         }         viterator& operator=(const viterator& other)         {             t=other.t;             return *this;         }          viterator& operator++()         {             t++;             return *this;         }          viterator operator++(int)         {             viterator iter=*this;             t++;             return iter;         }          viterator operator+(int count)         {             viterator iter=*this;             iter.t+=count;             return iter;         }          viterator& operator--()         {             t--;             return *this;         }          viterator operator--(int)         {             viterator iter=*this;             t--;             return iter;         }          viterator operator-(int count)         {             viterator iter=*this;             iter.t-=count;             return iter;         }          int operator-(const viterator& other)         {              return t-other.t;         }          int operator-(const viterator& other)const         {              return t-other.t;         }          T& operator*()         {             return *t;         }          const T& operator*() const         {             return *t;         }          T* operator->()         {             return t;         }         const T* operator->() const         {             return t;         }          inline bool operator!=(const viterator& other)         {             return t!=other.t;         }         inline bool operator!=(const viterator& other)const         {             return t!=other.t;         }          inline bool operator==(const viterator& other)         {             return t==other.t;         }         inline bool operator==(const viterator& other)const         {             return t==other.t;         }          inline bool operator<(const viterator& other)         {             return t<other.t;         }         inline bool operator<(const viterator& other)const         {             return t<other.t;         }          inline bool operator<=(const viterator& other)         {             return t<=other.t;         }         inline bool operator<=(const viterator& other)const         {             return t<=other.t;         }          inline bool operator>(const viterator& other)         {             return t>other.t;         }         inline bool operator>(const viterator& other)const         {             return t>other.t;         }          inline bool operator>=(const viterator& other)         {             return t>=other.t;         }          inline bool operator>=(const viterator& other)const         {             return t>=other.t;         }      private:          T* t;     };       template<typename T>     class cvector:public NoCopy     {     public:          typedef viterator<T> iterator;//viterator<T>就是对一个指针的包装，所以完全可以用T*代替viterator <T>         typedef const viterator<T> const_iterator;          //typedef T* iterator;         //typedef const T* const_iterator;         cvector()         {             initData(0);         }          cvector(int capa,const T& val=T())         {              initData(capa);             newCapacity(capacity_);             for (int i=0;i<size_;i++)                  buf[i]=val;          }          cvector(const_iterator first,const_iterator last)         {               initData(last-first);             newCapacity(capacity_);             iterator iter=iterator(first);              int index=0;             while(iter!=last)                 buf[index++]=*iter++;         }          ~cvector()         {             if (buf)             {                 delete[] buf;                 buf=NULL;             }             size_=capacity_=0;         }         void clear()         {             if (buf)                 erase(begin(),end());         }          void push_back(const T& t)         {             if (size_==capacity_)             {                 int capa=calculateCapacity();                 newCapacity(capa);             }             buf[size_++]=t;         }         void pop_back()         {              if (!empty())                 erase(end() - 1);          }          int insert(const_iterator iter,const T& t )         {               int index=iter-begin();             if (index<=size_)             {                 if (size_==capacity_)                 {                     int capa=calculateCapacity();                     newCapacity(capa);                 }                 memmove(buf+index+1,buf+index,(size_-index)*sizeof(T));                  buf[index]=t;                 size_++;             }              return index;         }         iterator erase(const_iterator iter)         {             int index=iter-begin();              if (index<size_ && size_>0)             {                 memmove(buf+index ,buf+index+1,(size_-index)*sizeof(T));                  buf[--size_]=T();             }              return iterator(iter);          }          iterator erase(const_iterator first,const_iterator last)         {              iterator first_=iterator(first);             iterator last_=iterator(last);              while(first_<=last_--)                  erase(first_);               return iterator(first_);         }          T& front()         {              assert(size_>0);             return buf[0];         }         T& back()         {              assert(size_>0);             return buf[size_-1];         }         T& at(int index)         {              assert(size_>0);             return buf[index];         }         T& operator[](int index)         {              assert(size_>0 && index>=0 && index<size_);             return buf[index];         }          bool empty() const         {             return size_==0;          }         int size() const         {             return size_;         }         int capacity() const         {             return capacity_;         }          iterator begin()         {               return iterator(&buf[0]);          }          iterator end()         {               return iterator(&buf[size_]);          }      private:          void newCapacity(int capa)         {              capacity_=capa;             T* newBuf=new T[capacity_];             if (buf)             {                 memcpy(newBuf,buf,size_*sizeof(T));                  delete [] buf;             }              buf=newBuf;         }          inline int calculateCapacity()         {             return capacity_*3/2+1 ;         }          inline void initData(int capa)         {             buf=NULL;             size_=capacity_=capa>0?capa:0;         }         int size_;          int capacity_ ;         T* buf;      };        struct Point     {         Point(int x_=0,int y_=0):x(x_),y(y_){}         int x,y;     };      bool operator<(const Point& p1,const Point& p2)     {         if(p1.x<p2.x)         {             return true;         }else if(p1.x>p2.x)         {             return false;         }         return p1.y<p2.y;     }      void cvectorTest()     {         cvector<Point> vect;         for (int i=0;i<10;i++)         {             Point p(i,i);              vect.push_back(p);         }          cvector<Point>::iterator iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         iter=vect.begin()+5;          vect.insert(iter,Point(55,55));          iter=vect.end()-3;          vect.insert(iter,Point(77,77));         cout<<endl<<endl<<"插入两个元素后："<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         std::sort(vect.begin(),vect.end());         cout<<endl<<endl<<"排序后："<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         vect.erase(vect.begin()+10);         vect.erase(vect.begin()+10);         cout<<endl<<endl<<"删除之前新增的两个元素"<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         vect.clear();         cout<<endl<<endl<<"执行clear之后"<<endl;         cout<<"size="<<vect.size()<<",capacity="<<vect.capacity();          cvector<Point> vect1;         for (int i=10;i<20;i++)         {             Point p(i,i);              vect1.push_back(p);         }         cout<<endl<<endl<<"从别的cvector复制数据:"<<endl;          cvector<Point> vect2(vect1.begin(),vect1.end());         vect2.pop_back();         vect2.pop_back();         for(int i=0;i<vect2.size();i++)         {             cout<<"["<<vect2[i].x<<","<<vect2[i].y<<"], ";         }          cout<<endl;      } }
+   ```
+
+   ```
+   //实例代码级运行结果 struct Point     {         Point(int x_=0,int y_=0):x(x_),y(y_){}         int x,y;     };      bool operator<(const Point& p1,const Point& p2)     {         if(p1.x<p2.x)         {             return true;         }else if(p1.x>p2.x)         {             return false;         }         return p1.y<p2.y;     }      void cvectorTest()     {         cvector<Point> vect;         for (int i=0;i<10;i++)         {             Point p(i,i);              vect.push_back(p);         }          cvector<Point>::iterator iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         iter=vect.begin()+5;          vect.insert(iter,Point(55,55));          iter=vect.end()-3;          vect.insert(iter,Point(77,77));         cout<<endl<<endl<<"插入两个元素后："<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         std::sort(vect.begin(),vect.end());         cout<<endl<<endl<<"排序后："<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         vect.erase(vect.begin()+10);         vect.erase(vect.begin()+10);         cout<<endl<<endl<<"删除之前新增的两个元素"<<endl;         iter=vect.begin();          while (iter!=vect.end())         {             cout<< "[" << iter->x << " " << iter->y <<"], ";             ++iter;         }         vect.clear();         cout<<endl<<endl<<"执行clear之后"<<endl;         cout<<"size="<<vect.size()<<",capacity="<<vect.capacity();          cvector<Point> vect1;         for (int i=10;i<20;i++)         {             Point p(i,i);              vect1.push_back(p);         }         cout<<endl<<endl<<"从别的cvector复制数据:"<<endl;                   cvector<Point> vect2(vect1.begin(),vect1.end());         vect2.pop_back();         vect2.pop_back();         for(int i=0;i<vect2.size();i++)         {             cout<<"["<<vect2[i].x<<","<<vect2[i].y<<"], ";         }                   cout<<endl;      }
+   ```
+
+## 12、说说 push_back 和 emplace_back 的区别
+
+**参考回答**
+
+    如果要将一个临时变量push到容器的末尾，push_back()需要先构造临时对象，再将这个对象拷贝到容器的末尾，而emplace_back()则直接在容器的末尾构造对象，这样就省去了拷贝的过程。
+
+**答案解析**
+
+    参考代码：
+
+```
+#include <iostream> #include <cstring> #include <vector> using namespace std;  class A { public:     A(int i){         str = to_string(i);         cout << "构造函数" << endl;      }     ~A(){}     A(const A& other): str(other.str){         cout << "拷贝构造" << endl;     }  public:     string str; };  int main() {     vector<A> vec;     vec.reserve(10);     for(int i=0;i<10;i++){         vec.push_back(A(i)); //调用了10次构造函数和10次拷贝构造函数,    // vec.emplace_back(i);  //调用了10次构造函数一次拷贝构造函数都没有调用过     } }
+```
+
+## 13、STL 中 vector 与 list 具体是怎么实现的？常见操作的时间复杂度是多少？
+
+**参考回答**
+
+1. vector 一维数组（元素在内存连续存放）
+   是动态数组，在堆中分配内存，元素连续存放，有保留内存，如果减少大小后，内存也不会释放；如果新增大小当前大小时才会重新分配内存。
+   扩容方式： a. 倍放开辟三倍的内存
+   b. 旧的数据开辟到新的内存
+   c. 释放旧的内存
+   d. 指向新内存
+2. list 双向链表（元素存放在堆中）
+   元素存放在堆中，每个元素都是放在一块内存中，它的内存空间可以是不连续的，通过指针来进行数据的访问，这个特点，使得它的随机存取变得非常没有效率，因此它没有提供[ ]操作符的重载。但是由于链表的特点，它可以很有效的支持任意地方的删除和插入操作。
+   特点：a. 随机访问不方便
+   b. 删除插入操作方便
+3. 常见时间复杂度
+   （1）vector插入、查找、删除时间复杂度分别为：O(n)、O(1)、O(n)；
+   （2）list插入、查找、删除时间复杂度分别为：O(1)、O(n)、O(1)。
+
+## 14、什么时候需要用hash_map，什么时候需要用map?
 
 总体来说，hash_map 查找速度会比 map 快，而且查找速度基本和数据数据量大小无关，属于常数级别;而 map 的查找速度是 log(n) 级别。
 
@@ -1094,7 +1646,7 @@ C++ STL从广义来讲包括了三类：算法，容器和迭代器。
 
 现在知道如何选择了吗？权衡三个因素: 查找速度, 数据量, 内存使用 。
 
-## 3、Vector如何释放空间?
+## 15、Vector如何释放空间?
 
 由于vector的内存占用空间只增不减，比如你首先分配了10,000个字节，然后erase掉后面9,999个，留下一个有效元素，但是内存占用仍为10,000个。所有内存空间是在vector析构时候才能被系统回收。empty()用来检测容器是否为空的，clear()可以清空所有元素。但是即使clear()，vector所占用的内存空间依然如故，无法保证内存的回收。
 
@@ -1105,7 +1657,7 @@ vector(Vec).swap(Vec); //将Vec的内存清除；
 vector().swap(Vec); //清空Vec的内存；
 ```
 
-## 4、如何在共享内存上使用STL标准库？
+## 16、如何在共享内存上使用STL标准库？
 
 1) 想像一下把STL容器，例如map, vector, list等等，放入共享内存中，IPC一旦有了这些强大的通用数据结构做辅助，无疑进程间通信的能力一下子强大了很多。
 
@@ -1121,7 +1673,7 @@ vector().swap(Vec); //清空Vec的内存；
 
 进程B知道如何获取该保存了地址映射的map容器，然后同样再根据名字取得其他容器的地址。
 
-## 5、map插入方式有哪几种？
+## 17、map插入方式有哪几种？
 
 1) 用insert函数插入pair数据，
 
@@ -1146,37 +1698,6 @@ mapStudent.insert(make_pair(1, "student_one"));
 ```C++
 mapStudent[1] = "student_one"; 
 ```
-
-## 6、C++中的容器了解多少
-
-一个容器是特定类型对象的集合，在C++标准库中包含了大部分常见的容器。STL 是“Standard Template Library”的缩写，中文译为“标准模板库”。STL 是 C++ 标准库的一部分，不用单独安装。TSL核心包括3个组件。容器(containers)，算法(algorithms)，迭代器(iterators)。除此外还有仿函数，内存配置器和配接器。
-
-- 序列式容器（Sequence containers）：此为可序群集，其中每个元素均有固定位置—取决于插入时机和地点，和元素值无关。如果你以追加方式对一个群集插入六个元素，它们的排列次序将和插入次序一致。STL提供了三个序列式容器：向量（vector）、双端队列（deque）、列表（list），此外你也可以把 string 和 array 当做一种序列式容器。
-- 关联式容器（Associative containers）：此为已序群集，元素位置取决于特定的排序准则以及元素值，和插入次序无关。如果你将六个元素置入这样的群集中，它们的位置取决于元素值，和插入次序无关。STL提供了四个关联式容器：集合（set）、多重集合（multiset）、映射（map）和多重映射（multimap）。
-
-对于容器，主要的操作有：容器的建立、插入元素、删除元素、查询、遍历、计算元素个数、检查元素是否为空、输出容器包含的内容。
-
-## 7、STL
-
-由容器，迭代器，仿函数，算法，分配器，适配器构成。分配器给容器分配存储空间，算法通过迭代器获取容器中的内容，仿函数可以协助算法完成各种操作，配置器用来套接适配仿函数。
-
-迭代器(iterator)是一种抽象的设计理念，通过迭代器可以在不了解容器内部原理的情况下遍历容器。除此之外，STL中迭代器一个最重要的作用就是作为容器(vector,list等)与STL算法的粘结剂，只要容器提供迭代器的接口，同一套算法代码可以利用在完全不同的容器中，这是抽象思想的经典应用。
-
-## 8、STL中vector和list的实现，常见操作的时间复杂度。
-
-作为STL中的两个经典容器，vector是动态数组的实现，list是链式表的实现，我们经常探究系统存储的发现两大存储形式，一种就是连续元素的成块存储，另一种就是散列式的元素，互相指引成链的链式存储。就实现而言，vector是拥有连续内存的动态数组，针对随机访问的时间复杂度为O(1)，但正因为存储是连续的，想要往数组首部和中部插入元素就会导致大块的数据拷贝或者移动，所以时间复杂度为O(n)；list则是由双向链表实现，因为内存是散列式的，不连续的，所以插入和删除的操作都很快，事件复杂度为O(1)，而查询就需要顺着链表一路向下或向上来逐个查询，所以时间复杂度为O(n)。
-
-一般先简单介绍，说说相同点，然后说区别
-
-比如，vector和list都是一个用来存放相同元素的集合
-
-不同点就 vector内存中连续存放，随机访问，插入删除复杂度高
-
-List不连续，链表形式存放，插入删除复杂低
-
-## 9、STL中内存分配器原理
-
-内存分配器有两层，第一层，分配大于128kb，直接用operator new，这就是一级内存分配器；第二层，小于128kb，使用二级内存分配器，即内存池。
 
 # C++内存管理
 
@@ -1272,17 +1793,17 @@ delete简单数据类型默认只是调用free函数；复杂数据类型先调�
 3. 指针指向新地址时参考规则1
 4. new和delete、new[]和delete[]要对应，`malloc`和 `free`未成对出现
 
-判断和定位内存泄漏的方法：在Linux系统下，可以使用valgrind、mtrace等内存泄漏检测工具。
+判断和定位内存泄漏的方法：在Linux系统下，可以使用valgrind、mtrace等内存泄漏检测工具。一些常见的工具插件，如ccmalloc、Dmalloc、Leaky、Valgrind等等。
 
-## 5、C++的内存管理
+## 5、简述C++的内存管理
 
 在C++中，内存被分成五个区：栈、堆、自由存储区、静态存储区、常量区
 
-栈：存放函数的参数和局部变量，编译器自动分配和释放
+栈：存放函数的参数和局部变量，编译器自动分配和释放。
 
-堆：new关键字动态分配的内存，由程序员手动进行释放，否则程序结束后，由操作系统自动进行回收
+堆：new关键字动态分配的内存，由程序员手动进行释放，否则程序结束后，由操作系统自动进行回收。
 
-自由存储区：由malloc分配的内存，和堆十分相似，由对应的free进行释放
+自由存储区：由malloc分配的内存，和堆十分相似，由对应的free进行释放。
 
 全局/静态存储区：存放全局变量和静态变量
 
@@ -1319,11 +1840,7 @@ c++程序内存分静态区、堆区和栈区，代码区，静态区存放全�
 1. 只能在堆上分配内存：将析构函数声明为 `private`；
 2. 只能在栈上生成对象：将 `new`和 `delete`重载为 `private`。
 
-## 9、浅拷贝和深拷贝的区别
-
-浅拷贝和深拷贝其实是针对拷贝对象是否存在指针成员的情况而言的，当存在指针成员而且浅拷贝发生，就会使得指针被拷贝一份但指针指向内容没有拷贝，也就是它们指向的内容是同一份，会存在内存释放时造成内存泄漏的风险，而两个对象被释放也会因为两次调用delete，而实际指向内容只有一份而程序崩溃，另外这样也会出现竞争。深拷贝就是基于这种情况，把指针指向的内容也拷贝了一份，一个类要实现深拷贝就要实现拷贝构造函数。
-
-## 10、简述c++内存对齐场景和规则
+## 9、简述c++内存对齐场景和规则
 
 内存对齐最早是出现在c结构体中的成员偏移，然后继承了c的c++用类似的方法实现了类，所以类也存在内存对齐的现象。内存对齐的存在，是为了使得CPU对内存的访问更有效率，对齐的方法有手动使用#pragma pack(n)来设置，也有让编译器自己拿主意。对齐的规则(n为手动设置或者默认的对齐值)：
 
@@ -1457,7 +1974,7 @@ std::cout << alignof(Info2) << std::endl;  // 4
 
   这种处理方式是 `alignas`处理不了的。
 
-## 11、在C++中，使用malloc申请的内存能否通过delete释放？使用new申请的内存能否用free？
+## 10、在C++中，使用malloc申请的内存能否通过delete释放？使用new申请的内存能否用free？
 
 不能。
 
@@ -1467,7 +1984,58 @@ malloc /free主要为了兼容C，new和delete 完全可以取代malloc /free的
 
 当然从理论上说使用malloc申请的内存是可以通过delete释放的。不过一般不这样写的。而且也不能保证每个C++的运行时都能正常。
 
-## 12、栈溢出的原因以及解决方法
+## 11、栈溢出的原因以及解决方法
 
 - 函数调用层次过深,每调用一次,函数的参数、局部变量等信息就压一次栈；
 - 局部变量体积太大。解决办法大致说来也有两种： 增加栈内存的数目；增加栈内存方法如下,在vc6种依次选择Project->Setting->Link,在Category中选择output,在Reserve中输入16进制的栈内存大小如:0x10000000；使用堆内存；具体实现由很多种方法可以直接把数组定义改成指针,然后动态申请内存;也可以把局部变量变成全局变量,一个偷懒的办法是直接在定义前边加个static,呵呵,直接变成静态变量(实质就是全局变量)
+
+## 12、程序有哪些section，分别的作用？程序启动的过程？怎么判断数据分配在栈上还是堆上？
+
+![img](./image/section.png)
+
+**一个程序有哪些section：**
+
+如上图，**从低地址到高地址，一个程序由代码段、数据段、BSS段、堆、共享区、栈等**组成。
+
+1. 数据段：存放程序中已初始化的全局变量和静态变量的一块内存区域。
+2. 代码段：存放程序执行代码的一块内存区域。只读，代码段的头部还会包含一些只读的常数变量。
+3. **BSS** 段：存放程序中未初始化的全局变量和静态变量的一块内存区域。
+4. 可执行程序在运行时又会多出两个区域：堆区和栈区。
+   堆区：动态申请内存用。堆从低地址向高地址增长。
+   栈区：存储局部变量、函数参数值。栈从高地址向低地址增长。是一块连续的空间。
+5. 最后还有一个**共享区**，位于堆和栈之间。
+
+**程序启动的过程：**
+
+1. 操作系统首先创建相应的进程并分配私有的进程空间，然后操作系统的加载器负责把可执行文件的数据段和代码段映射到进程的虚拟内存空间中。
+2. 加载器读入可执行程序的导入符号表，根据这些符号表可以查找出该可执行程序的所有依赖的动态链接库。
+3. 加载器针对该程序的每一个动态链接库调用LoadLibrary （1）查找对应的动态库文件，加载器为该动态链接库确定一个合适的基地址。 （2）加载器读取该动态链接库的导入符号表和导出符号表，比较应用程序要求的导入符号是否匹配该库的导出符号。 （3）针对该库的导入符号表，查找对应的依赖的动态链接库，如有跳转，则跳到3 （4）调用该动态链接库的初始化函数
+4. 初始化应用程序的全局变量，对于全局对象自动调用构造函数。
+5. 进入应用程序入口点函数开始执行。
+
+怎么判断数据分配在栈上还是堆上：首先局部变量分配在栈上；而通过malloc和new申请的空间是在堆上。
+
+## 13、初始化为0的全局变量在bss还是data
+
+BSS段通常是指用来存放程序中未初始化的或者初始化为0的全局变量和静态变量的一块内存区域。特点是可读写的，在程序执行之前BSS段会自动清0。
+
+## 14、请简述一下atomoic内存顺序。
+
+有六个内存顺序选项可应用于对原子类型的操作：
+
+1. memory_order_relaxed：在原子类型上的操作以自由序列执行，没有任何同步关系，仅对此操作要求原子性。
+2. memory_order_consume：memory_order_consume只会对其标识的对象保证该对象存储先行于那些需要加载该对象的操作。
+3. memory_order_acquire：使用memory_order_acquire的原子操作，当前线程的读写操作都不能重排到此操作之前。
+4. memory_order_release：使用memory_order_release的原子操作，当前线程的读写操作都不能重排到此操作之后。
+5. memory_order_acq_rel：memory_order_acq_rel在此内存顺序的读-改-写操作既是获得加载又是释放操作。没有操作能够从此操作之后被重排到此操作之前，也没有操作能够从此操作之前被重排到此操作之后。
+6. memory_order_seq_cst：memory_order_seq_cst比std::memory_order_acq_rel更为严格。memory_order_seq_cst不仅是一个"获取释放"内存顺序，它还会对所有拥有此标签的内存操作建立一个单独全序。
+
+除非为特定的操作指定一个顺序选项，否则内存顺序选项对于所有原子类型默认都是memory_order_seq_cst。
+
+---
+
+
+
+# C++新特性
+
+具体见[README.md](../README.md)的链接
