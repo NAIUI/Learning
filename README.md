@@ -7,6 +7,8 @@
 | [语言](./Language/Language.md) | 设计模式 | [网络](./Network/Network.md) | 面经 | [工具](./Tools/Tools.md) | [操作系统](./OS/os.md) | [数据库](./Databases/Databases.md) | [运维](./O&M/O&M.md) |
 | --------------------------- | -------- | ------------------------- | ---- | --------------------- | ------------------- | ------------------------------- | ----------------- |
 
+[国内外优秀音视频博客](https://zhuanlan.zhihu.com/p/27410154)
+
 ## C/C++
 
 * C++新特性了解一下([C++11](./Language/Cpp11.md)、[C++14](./Language/Cpp14.md)、[C++17](./Language/Cpp17.md)、[C++20](./Language/Cpp20.md))

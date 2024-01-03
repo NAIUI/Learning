@@ -13,3 +13,11 @@
 ## 4、可变参数
 
 [C++ 实现可变参数的三个方法 - Ofnoname - 博客园 (cnblogs.com)](https://www.cnblogs.com/ofnoname/p/16524932.html)
+
+## 5、C++Primer
+
+[《C++Primer》全书学习笔记（详细） - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/454873031)
+
+## 6、左右值
+
+[【Modern C++】深入理解左值、右值 (qq.com)](https://mp.weixin.qq.com/s/_9-0iNUw6KHTF3a-vSMCmg)
