@@ -43,6 +43,8 @@
 
 [MySQL命令速记](./Databases/MySQL命令.docx)
 
+[Oracle基础文档](./Databases/oracle基础-docx)
+
 ## Tools
 
 [如何构建CMake](./Tools/CMake/从零开始详细介绍CMake.pdf)
