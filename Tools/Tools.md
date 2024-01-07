@@ -9,3 +9,7 @@
 ## 3、makefile
 
 [一些通用的Makefile文件模板 (qq.com)](https://mp.weixin.qq.com/s/1nXoEcdURd5EUWo4fb_Umg?poc_token=HDx7k2Wj-QnUIj12ToVfaId2JSZzge0aeUIusvrb)
+
+## 4、JSON
+
+[RapidJSON 代码剖析 系列文章目录 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/655451897)

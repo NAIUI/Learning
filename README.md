@@ -13,6 +13,7 @@
 
 * C++新特性了解一下([C++11](./Language/C++new/Cpp11.md)、[C++14](./Language/C++new/Cpp14.md)、[C++17](./Language/C++new/Cpp17.md)、[C++20](./Language/C++new/Cpp20.md))
 * [C++Primer笔记](./Language/C++primer笔记.md)
+* [C语言的目录、文件、时间相关操作（Linux）](./Language/C目录文件和时间操作.md)
 
 ## 设计模式
 
@@ -20,7 +21,7 @@
 
 ## 操作系统
 
-* [Linux命令总结](./OS/Linux.md)
+* [Linux基础](./OS/Linux基础.md)
 * [多线程编程看这里](./OS/thread.md)
 * [Linux高性能服务器编程笔记](./OS/Linux高性能服务器编程笔记.md)
 
