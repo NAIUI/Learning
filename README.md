@@ -14,6 +14,7 @@
 * C++新特性了解一下([C++11](./Language/C++new/Cpp11.md)、[C++14](./Language/C++new/Cpp14.md)、[C++17](./Language/C++new/Cpp17.md)、[C++20](./Language/C++new/Cpp20.md))
 * [C++Primer笔记](./Language/C++primer笔记.md)
 * [C语言的目录、文件、时间相关操作（Linux）](./Language/C目录文件和时间操作.md)
+* [malloc系列](./Language/malloc系列问题.md)
 
 ## 设计模式
 
@@ -22,7 +23,8 @@
 ## 操作系统
 
 * [Linux基础](./OS/Linux基础.md)
-* [多线程编程看这里](./OS/thread.md)
+* [Linux进程](./OS/process.md)
+* [多线程编程](./OS/thread.md)
 * [Linux高性能服务器编程笔记](./OS/Linux高性能服务器编程笔记.md)
 
 ## 网络
@@ -50,3 +52,4 @@
 * [如何构建CMake](./Tools/CMake/从零开始详细介绍CMake.pdf)
 * [Git使用](./Tools/Git/Git.md)
 * [Visual Studio学习](./Tools/VisualStudio/VisualStudio.md)，一个项目的构建（[Tank-1900](./Tools/VisualStudio/Tank-1900/)）
+* [GDB调试技巧](./Tools/GDB/gdb.md)
