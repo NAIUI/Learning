@@ -47,6 +47,10 @@
 * [Oracle基础文档](./Databases/oracle基础)
 * [MongoDB集群搭建-基于docker](./Databases/MongoDB/mongodb-cluster-docker.md)
 
+## 数据结构与算法
+* [数据结构整理](./算法刷题/data.md)
+* [模块刷题](./算法刷题/leetcode/算法刷题.md)
+
 ## Tools
 
 * [如何构建CMake](./Tools/CMake/从零开始详细介绍CMake.pdf)
