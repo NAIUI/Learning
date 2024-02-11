@@ -21,3 +21,7 @@
 ## 6、左右值
 
 [【Modern C++】深入理解左值、右值 (qq.com)](https://mp.weixin.qq.com/s/_9-0iNUw6KHTF3a-vSMCmg)
+
+## 7、C/C++标准库
+
+[从本质到实现，谈谈什么是 C 和 C ++ 标准库？ (qq.com)](https://mp.weixin.qq.com/s?__biz=MzkxNzQzNDM2Ng==&mid=2247499898&idx=1&sn=641f33520dc809abb3f1af340e52eedc&chksm=c1423aebf635b3fd5989d0fc0156a946644b96dcbe9204d7e0f595926df9df27b542f98d0fca&mpshare=1&scene=23&srcid=0201JYZVo0Ew4H2olO74pxOY&sharer_shareinfo=be2fb2c0b9f2c5303049591f904b5545&sharer_shareinfo_first=92f4bf5b3b8c3b74bef6ebf5f68378f7#rd)
