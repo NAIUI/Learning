@@ -2113,6 +2113,7 @@ int main()
            cout << "s4指针为nullptr" << endl;
        else
            cout << s4->d << endl;
+   ```
 
 
        return 0;
@@ -2136,7 +2137,7 @@ int main()
 
 1. 仿函数（functor）又称为函数对象（function object）是一个能行使函数功能的类。仿函数的语法几乎和我们普通的函数调用一样，不过作为仿函数的类，都必须重载operator()运算符，举个例子：
 
-```
+   ```
 class Func{
 public:
     void operator() (const string& str) const {
@@ -2154,7 +2155,7 @@ myFunc("helloworld!");
 1. 仿函数既能想普通函数一样传入给定数量的参数，还能存储或者处理更多我们需要的有用信息。我们可以举个例子：
    假设有一个vector `<string>`，你的任务是统计长度小于5的string的个数，如果使用count_if函数的话，你的代码可能长成这样：
 
-   ```
+```
     bool LengthIsLessThanFive(const string& str) {
         return str.length()<5;  
     }
@@ -2199,7 +2200,7 @@ myFunc("helloworld!");
 
 必须为原函数模板的每个模板参数都提供实参，且使用关键字template后跟一个空尖括号对<>，表明将原模板的所有模板参数提供实参，举例如下：
 
-```C++
+​```C++
 template<typename T> //模板函数
 int compare(const T &v1,const T &v2)
 {
@@ -2213,7 +2214,7 @@ int compare(const char* const &v1,const char* const &v2)
 {
     return strcmp(p1,p2);
 }
-```
+   ```
 
 **「本质」**特例化的本质是实例化一个模板，而非重载它。特例化不影响参数匹配。参数匹配都以最佳匹配为原则。例如，此处如果是compare(3,5)，则调用普通的模板，若为compare(“hi”,”haha”)则调用特例化版本（因为这个cosnt char*相对于T，更匹配实参类型），注意二者函数体的语句不一样了，实现不同功能。
 
@@ -2461,17 +2462,17 @@ C++ STL从广义来讲包括了三类：算法，容器和迭代器。
 **答案解析**
 
     **问题延伸：**
-
+    
     resize 和 reserve 既有差别，也有共同点。两个接口的**共同点**是**它们都保证了vector的空间大小(capacity)最少达到它的参数所指定的大小。**下面就他们的细节进行分析。
-
+    
     为实现resize的语义，resize接口做了两个保证：
-
+    
     （1）保证区间[0, new_size)范围内数据有效，如果下标index在此区间内，vector[indext]是合法的；
-
+    
     （2）保证区间[0, new_size)范围以外数据无效，如果下标index在区间外，vector[indext]是非法的。
-
+    
     reserve只是保证vector的空间大小(capacity)最少达到它的参数所指定的大小n。在区间[0, n)范围内，如果下标是index，vector[index]这种访问有可能是合法的，也有可能是非法的，视具体情况而定。
-
+    
     以下是两个接口的源代码：
 
 ```C++
@@ -3213,6 +3214,111 @@ TCMalloc的底层实现主要包括以下几个模块:
 5. SizeClass: SizeClass定义了不同大小范围的对象分类规则,每个SizeClass对应一种大小的内存块。TCMalloc会根据对象的大小选择合适的SizeClass,并将其分配到相应的Span和 FreeList中。
 
 TCMalloc通过合理地组织和管理内存块，利用线程本地缓存以及全局共享资源,实现了高效的内存分配和释放机制。
+
+## 23、内存池
+
+内存池（Memory Pool）是一种用于管理内存分配的机制，它通过预先分配一块固定大小的内存块，然后根据需要从这个内存块中分配小块内存给应用程序使用，以减少内存碎片和提高内存分配的效率。
+
+1. 内存池的目的：
+
+- 减少内存碎片：内存池通过预先分配一块连续的内存，避免了频繁的小块内存分配和释放，减少了内存碎片的产生。
+- 提高内存分配效率：内存池可以通过一次分配多次使用，减少了内存分配的开销，提高了内存分配的效率。
+
+1. 内存池的实现方式：
+
+- 固定大小的块：内存池通常将内存划分成大小相等的块，每个块都可以独立地分配给应用程序。
+- 预分配内存：内存池在初始化时会预分配一定大小的内存块，并将这些块组织成链表或其他数据结构。
+- 分配策略：内存池可以采用不同的分配策略，例如首次适应、最佳适应、最差适应等。
+
+1. 内存池的优势：
+
+- 降低内存碎片：内存池通过将内存分配和释放控制在一个固定大小的块中，有效地减少了内存碎片的产生。
+- 提高性能：内存池减少了频繁的内存分配和释放操作，降低了内存管理的开销，提高了程序性能。
+
+1. 使用场景：
+
+- 频繁地小块内存分配：内存池特别适用于需要频繁地分配和释放小块内存的场景，如网络编程、嵌入式系统等。
+- 实时系统：在实时系统中，内存分配的延迟是一个重要的考量因素，内存池可以帮助降低内存分配的延迟。
+
+1. 内存池的实现步骤：
+
+- 预分配内存块：在初始化时，内存池预分配一块固定大小的内存。
+- 组织内存块： 将预分配的内存划分成大小相等的块，并组织成链表或其他数据结构。
+- 分配内存：当应用程序需要内存时，从内存池中分配一个块。
+- 释放内存：当应用程序不再需要内存时，将内存块释放回内存池。
+
+1. 简单实现代码：
+
+```C++
+#include <iostream>
+#include <vector>
+
+class MemoryPool {
+private:
+    std::vector<void*> blocks;
+    size_t block_size;
+
+public:
+    MemoryPool(size_t size) : block_size(size) {
+        // 初始化时预分配一定数量的内存块
+        allocateBlock();
+    }
+
+    ~MemoryPool() {
+        // 释放所有内存块
+        for (void* block : blocks) {
+            delete[] static_cast<char*>(block);
+        }
+    }
+
+    void* allocate() {
+        // 从当前内存块中分配内存
+        if (blocks.empty() || block_size - usedSpace() < sizeof(void*)) {
+            allocateBlock();
+        }
+
+        void* allocated = static_cast<char*>(blocks.back()) + usedSpace();
+        incrementUsedSpace(sizeof(void*));
+        return allocated;
+    }
+
+    void deallocate(void* ptr) {
+        // 内存释放回内存池
+        // 此处简化实现，不进行内存复用
+    }
+
+private:
+    void allocateBlock() {
+        // 分配一个新的内存块
+        void* block = new char[block_size];
+        blocks.push_back(block);
+        resetUsedSpace();
+    }
+
+    size_t usedSpace() const {
+        // 计算当前内存块已使用的空间
+        if (!blocks.empty()) {
+            return reinterpret_cast<size_t>(blocks.back());
+        }
+        return 0;
+    }
+
+    void incrementUsedSpace(size_t size) {
+        // 增加已使用空间的偏移量
+        if (!blocks.empty()) {
+            blocks.back() = static_cast<void*>(static_cast<char*>(blocks.back()) + size);
+        }
+    }
+
+    void resetUsedSpace() {
+        // 重置已使用空间的偏移量
+        if (!blocks.empty()) {
+            blocks.back() = nullptr;
+        }
+    }
+};
+```
+
 
 ---
 
