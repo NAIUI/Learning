@@ -4,9 +4,9 @@ Redis是一个 **数据库** ，不过与传统数据库不同的是Redis的数�
 
 除此之外，Redis也经常用来做分布式锁，Redis提供了多种数据类型来支持不同的业务场景。除此之外，Redis 支持事务持久化、LUA脚本、LRU驱动事件、多种集群方案。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_2%E3%80%81redis%E7%9A%84%E4%BA%94%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%95%B4%E7%90%86)2、Redis的五种数据结构整理
+## 2、Redis的五种数据结构整理
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2-simple-dynamic-string-sds)**简单动态字符串(Simple Dynamic String，SDS)**
+### 简单动态字符串
 
 Redis没有直接使用C语言传统的字符串，而是自己构建了一种名为简单动态字符串（Simple dynamic string，SDS）的抽象类型，并将SDS用作Redis的默认字符串表示。
 
@@ -26,8 +26,6 @@ struct sdshdr {
     // 字节数组，用于保存字符串
     char buf[];
 }
- 
-        @阿秀: 代码已成功复制到剪贴板
   
 ```
 
@@ -41,7 +39,7 @@ struct sdshdr {
 
 它具有很常规的 set/get 操作，value 可以是String也可以是数字，一般做一些复杂的计数功能的缓存。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E9%93%BE%E8%A1%A8)**链表**
+### **链表**
 
 当有一个列表键包含了数量比较多的元素，又或者列表中包含的元素都是比较长的额字符串时，Redis就会使用链表作为列表建的底层实现。
 
@@ -91,11 +89,11 @@ typedef struct list {
 * 因为链表表头的前置节点和表尾节点的后置节点都指向NULL，所以Redis的链表实现是无环链表。
 * 通过为链表设置不同的类型特定函数，Redis的链表可以用于保存各种不同类型的值。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E5%AD%97%E5%85%B8)**字典**
+### **字典**
 
 字典的底层是哈希表，类似 C++中的 map ，也就是键值对。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E5%93%88%E5%B8%8C%E8%A1%A8)**哈希表**
+### **哈希表**
 
 ```c
 typedef struct dictht {
@@ -109,8 +107,6 @@ typedef struct dictht {
     // 该哈希表已有节点的数量
     unsigned long used;
 } dichht;
- 
-        @阿秀: 代码已成功复制到剪贴板
   
 ```
 
@@ -129,7 +125,7 @@ Redis的哈希表使用链地址法来解决键冲突，每个哈希表节点都
 3. Redis使用MurmurHash2算法来计算键的哈希值。
 4. 哈希表使用链地址法来解决键冲突。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E8%B7%B3%E8%B7%83%E8%A1%A8)**跳跃表**
+### **跳跃表**
 
 先看这样一张图： ![](http://oss.interviewguide.cn/img/202205220024713.png)
 
@@ -175,9 +171,6 @@ typedef struct zskiplistNode {
         unsigned int span;
     } leval[];
 } zskiplistNode;
- 
-        @阿秀: 代码已成功复制到剪贴板
-  
 ```
 
 一般来说，层的数量越多，访问其他节点的速度越快。
@@ -193,8 +186,6 @@ typedef struct zskiplist {
     // 表中层数最大的节点的层数
     int leval;
 } zskiplist;
- 
-        @阿秀: 代码已成功复制到剪贴板
   
 ```
 
@@ -207,7 +198,7 @@ typedef struct zskiplist {
 * 跳跃表中的节点按照分值大小进行排序，当分值相同时，节点按照成员对象的大小进行排序。
 * 跳表是一种实现起来很简单，单层多指针的链表，它查找效率很高，堪比优化过的二叉平衡树，且比平衡树的实现。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8)**压缩列表**
+### **压缩列表**
 
 > 压缩列表(ziplist)是列表键和哈希键的底层实现之一。当一个列表键只包含少量列表项，并且每个列表项要么就是小整数值，要么就是长度比较短的字符串，那么Redis就会使用压缩列表来做列表键的底层实现。
 
@@ -215,17 +206,17 @@ typedef struct zskiplist {
 
 看他的名字就能看出来，是为了节省内存造的列表结构。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_3%E3%80%81redis%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88)3、Redis常见数据结构以及使用场景分别是什么？
+## 3、Redis常见数据结构以及使用场景分别是什么？
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#string)**String**
+### **String**
 
 String数据结构是简单的key-value类型，value其实不仅可以是String，也可以是数字。 常规key-value缓存应用； 常规计数：微博数，粉丝数等。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#hash)**Hash**
+### **Hash**
 
 Hash 是一个 string 类型的 ﬁeld 和 value 的映射表，hash 特别适合用于存储对象，后续操作的时候，你可以直接仅 仅修改这个对象中的某个字段的值。 比如我们可以Hash数据结构来存储用户信息，商品信息等。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#list)**List**
+### **List**
 
 list 就是链表，Redis list 的应用场景非常多，也是Redis最重要的数据结构之一，比如微博的关注列表，粉丝列表， 消息列表等功能都可以用Redis的 list 结构来实现。
 
@@ -233,7 +224,7 @@ Redis list 的实现为一个双向链表，即可以支持反向查找和遍历
 
 另外可以通过 lrange 命令，就是从某个元素开始读取多少个元素，可以基于 list 实现分页查询，这个很棒的一个功 能，基于 Redis 实现简单的高性能分页，可以做类似微博那种下拉不断分页的东西（一页一页的往下走），性能高。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#set)**Set**
+### **Set**
 
 set 对外提供的功能与list类似是一个列表的功能，特殊之处在于 set 是可以自动排重的。
 
@@ -241,20 +232,20 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 比如：在微博应用中，可以将一个用户所有的关注人存在一个集合中，将其所有粉丝存在一个集合。Redis可以非常 方便的实现如共同关注、共同粉丝、共同喜好等功能。这个过程也就是求交集的过程，具体命令如下：`sinterstore key1 key2 key3`将交集存在key1内。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#sorted-set)**Sorted Set**
+### **Sorted Set**
 
 和set相比，sorted set增加了一个权重参数score，使得集合中的元素能够按score进行有序排列。
 
 举例： 在直播系统中，实时排行信息包含直播间在线用户列表，各种礼物排行榜，弹幕消息（可以理解为按消息维 度的消息排行榜）等信息，适合使用 Redis 中的 SortedSet 结构进行存储。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_4%E3%80%81%E6%9C%89mysql%E4%B8%8D%E5%B0%B1%E5%A4%9F%E7%94%A8%E4%BA%86%E5%90%97-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8redis%E8%BF%99%E7%A7%8D%E6%96%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93)4、有MySQL不就够用了吗？为什么要用Redis这种新的数据库？
+## 4、有MySQL不就够用了吗？为什么要用Redis这种新的数据库？
 
 主要是因为 Redis 具备高性能和高并发两种特性。
 
 * **高性能** ：假如用户第一次访问数据库中的某些数据。这个过程会比较慢，因为是从硬盘上读取的。将该用户访问的数据存在缓存中，这样下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。如果数据库中的对应数据改变的之后，同步改变缓存中相应的数据即可！
 * **高并发** ：直接操作缓存能够承受的请求是远远大于直接访问数据库的，所以我们可以考虑把数据库中的部分数据转移到缓存中去，这样用户的一部分请求会直接到缓存这里而不用经过数据库。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_5%E3%80%81c-%E4%B8%AD%E7%9A%84map%E4%B9%9F%E6%98%AF%E4%B8%80%E7%A7%8D%E7%BC%93%E5%AD%98%E5%9E%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8map-%E8%80%8C%E9%80%89%E6%8B%A9redis%E5%81%9A%E7%BC%93%E5%AD%98)5、C++中的Map也是一种缓存型数据结构，为什么不用Map，而选择Redis做缓存？
+## 5、C++中的Map也是一种缓存型数据结构，为什么不用Map，而选择Redis做缓存？
 
 严格意义上来说缓存分为**本地缓存**和 **分布式缓存** 。
 
@@ -262,7 +253,7 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 使用 Redis 或 Memcached 之类的称为分布式缓存，在多实例的情况下，各实例共享一份缓存数据，缓存具有一致性。这是Redis或者Memcached的优点所在，但它也有缺点，那就是需要保持 Redis 或 Memcached服务的高可用，整个程序架构上较为复杂。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_6%E3%80%81%E4%BD%BF%E7%94%A8redis%E7%9A%84%E5%A5%BD%E5%A4%84%E6%9C%89%E5%93%AA%E4%BA%9B)6、使用Redis的好处有哪些？
+## 6、使用Redis的好处有哪些？
 
 1、访问速度快，因为数据存在内存中，类似于Java中的HashMap或者C++中的哈希表（如unordered_map/unordered_set），这两者的优势就是查找和操作的时间复杂度都是O(1)
 
@@ -272,7 +263,7 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 4、特性丰富：Redis可用于缓存，消息，按key设置过期时间，过期后将会自动删除。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_7%E3%80%81memcached%E4%B8%8Eredis%E7%9A%84%E5%8C%BA%E5%88%AB%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B)7、Memcached与Redis的区别都有哪些？
+## 7、Memcached与Redis的区别都有哪些？
 
 1、存储方式
 
@@ -295,7 +286,7 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 6、Value 值大小不同：Redis 最大可以达到 512MB；Memcached 只有 1MB。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_8%E3%80%81redis%E6%AF%94memcached%E7%9A%84%E4%BC%98%E5%8A%BF%E5%9C%A8%E5%93%AA%E9%87%8C)8、Redis比Memcached的优势在哪里？
+## 8、Redis比Memcached的优势在哪里？
 
 1、Memcached所有的值均是简单字符串，Redis作为其替代者，支持更为丰富的数据类型
 
@@ -303,7 +294,7 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 3、Redis可以做到持久化数据
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_9%E3%80%81%E7%BC%93%E5%AD%98%E4%B8%AD%E5%B8%B8%E8%AF%B4%E7%9A%84%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE%E5%92%8C%E5%86%B7%E6%95%B0%E6%8D%AE%E6%98%AF%E4%BB%80%E4%B9%88)9、缓存中常说的热点数据和冷数据是什么？
+## 9、缓存中常说的热点数据和冷数据是什么？
 
 其实就是名字上的意思，热数据就是访问次数较多的数据，冷数据就是访问很少或者从不访问的数据。
 
@@ -311,13 +302,17 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
  **数据更新前至少读取两次** ，缓存才有意义。这个是最基本的策略，如果缓存还没有起作用就失效了，那就没有太大价值了。
 
-## 10、Redis 为什么是单线程的而不采用多线程方案？这主要是基于一种客观原因来考虑的。因为Redis是基于内存的操作，CPU不是Redis的瓶颈，Redis的瓶颈最有可能是机器内存的大小或者网络带宽。既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了（毕竟采用多线程会有很多麻烦！）
+## 10、Redis 为什么是单线程的而不采用多线程方案？
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_11%E3%80%81%E5%8D%95%E7%BA%BF%E7%A8%8B%E7%9A%84redis%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB)11、单线程的Redis为什么这么快？
+这主要是基于一种客观原因来考虑的。因为Redis是基于内存的操作，CPU不是Redis的瓶颈，Redis的瓶颈最有可能是机器内存的大小或者网络带宽。既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了（毕竟采用多线程会有很多麻烦！）
+
+## 11、单线程的Redis为什么这么快？
 
 主要是有三个原因：1、Redis的全部操作都是纯内存的操作；2、Redis采用单线程，有效避免了频繁的上下文切换；3，采用了非阻塞I/O多路复用机制。
 
-## 12、了解Redis的线程模型吗？可以大致说说吗？如果你打开看过 Redis 的源码就会发现Redis 内部使用文件事件处理器 file event handler，这个文件事件处理器是单线程的，所以 Redis 才叫做单线程的模型。它采用 IO 多路复用机制同时监听多个 socket，根据 socket 上的事件来选择对应的事件处理器进行处理。
+## 12、了解Redis的线程模型吗？可以大致说说吗？
+
+如果你打开看过 Redis 的源码就会发现Redis 内部使用文件事件处理器 file event handler，这个文件事件处理器是单线程的，所以 Redis 才叫做单线程的模型。它采用 IO 多路复用机制同时监听多个 socket，根据 socket 上的事件来选择对应的事件处理器进行处理。
 
 ![](http://oss.interviewguide.cn/img/202205220024968.png)
 
@@ -334,7 +329,7 @@ set 对外提供的功能与list类似是一个列表的功能，特殊之处在
 
 一句话总结就是：“I/O 多路复用程序负责监听多个套接字， 并向文件事件分派器传送那些产生了事件的套接字。”
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_13%E3%80%81redis%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%9C%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88%E6%98%AF%E4%BB%80%E4%B9%88)13、Redis设置过期时间的两种方案是什么？
+## 13、Redis设置过期时间的两种方案是什么？
 
 Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中的值可以设置一个过期时间。
 
@@ -345,7 +340,7 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 * 定期删除：Redis默认是每隔 100ms 就随机抽取一些设置了过期时间的key，检查其是否过期，如果过期就删 除。注意这里是随机抽取的。为什么要随机呢？你想一想假如 Redis 存了几十万个 key ，每隔100ms就遍历所 有的设置过期时间的 key 的话，就会给 CPU 带来很大的负载！
 * 惰性删除 ：定期删除可能会导致很多过期 key 到了时间并没有被删除掉。所以就有了惰性删除。它是指某个键值过期后,此键值不会马上被删除,而是等到下次被使用的时候,才会被检查到过期,此时才能得到删除,惰性删除的缺点很明显是浪费内存。 除非你的系统去查一下那个 key，才会被Redis给删除掉。这就是所谓的惰性删除！
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_14%E3%80%81%E5%AE%9A%E6%9C%9F%E5%92%8C%E6%83%B0%E6%80%A7%E4%B8%80%E5%AE%9A%E8%83%BD%E4%BF%9D%E8%AF%81%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%90%97-%E5%A6%82%E6%9E%9C%E4%B8%8D%E8%83%BD-redis%E4%BC%9A%E6%9C%89%E4%BB%80%E4%B9%88%E5%BA%94%E5%AF%B9%E6%8E%AA%E6%96%BD)14、定期和惰性一定能保证删除数据吗？如果不能，Redis会有什么应对措施？
+## 14、定期和惰性一定能保证删除数据吗？如果不能，Redis会有什么应对措施？
 
 并不能保证一定删除，Redsi有一个Redis 内存淘汰机制来确保数据一定会被删除。
 
@@ -363,13 +358,13 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 
 该配置就是配内存淘汰策略的，主要有以下六种方案：  **volatile-lru** ：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰  **volatile-ttl** ：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰  **volatile-random** ：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰  **allkeys-lru** ：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰  **allkeys-random** ：从数据集（server.db[i].dict）中任意选择数据淘汰  **no-enviction** （驱逐）：禁止驱逐数据，新写入操作会报错 ps：如果没有设置 expire 的key, 不满足先决条件(prerequisites); 那么 volatile-lru, volatile-random 和 volatile-ttl 策略的行为, 和 noeviction(不删除) 基本上一致。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_15%E3%80%81redis%E5%AF%B9%E4%BA%8E%E5%A4%A7%E9%87%8F%E7%9A%84%E8%AF%B7%E6%B1%82-%E6%98%AF%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86%E7%9A%84)15、Redis对于大量的请求，是怎样处理的？
+## 15、Redis对于大量的请求，是怎样处理的？
 
 1、Redis是一个单线程程序，也就说同一时刻它只能处理一个客户端请求； 2、Redis是通过IO多路复用（select，epoll，kqueue，依据不同的平台，采取不同的实现）来处理多个客户端请求。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_16%E3%80%81%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E3%80%81%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81%E7%BC%93%E5%AD%98%E9%A2%84%E7%83%AD%E3%80%81%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E3%80%81%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E3%80%81%E7%BC%93%E5%AD%98%E9%99%8D%E7%BA%A7%E5%85%A8%E6%90%9E%E5%AE%9A)16、缓存雪崩、缓存穿透、缓存预热、缓存更新、缓存击穿、缓存降级全搞定！
+## 16、缓存雪崩、缓存穿透、缓存预热、缓存更新、缓存击穿、缓存降级全搞定！
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9)**缓存雪崩**
+### **缓存雪崩**
 
 缓存雪崩指的是缓存同一时间大面积的失效，所以，后面的请求都会落到数据库上，造成数据库短时间内承受大量请求而崩掉。
 
@@ -383,7 +378,7 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 * 事中：本地ehcache缓存 + hystrix限流&降级，避免MySQL崩掉， 通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。
 * 事后：利用 Redis 持久化机制保存的数据尽快恢复缓存
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F)**缓存穿透**
+### **缓存穿透**
 
 一般是黑客故意去请求缓存中不存在的数据，导致所有的请求都落到数据库上，造成数据库短时间内承受大量 请求而崩掉。
 
@@ -427,11 +422,11 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 
 **解决思路** 1、直接写个缓存刷新页面，上线时手工操作下； 2、数据量不大，可以在项目启动的时候自动进行加载； 3、定时刷新缓存；
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0)**缓存更新**
+### **缓存更新**
 
 除了缓存服务器自带的缓存失效策略之外（Redis默认的有6中策略可供选择），我们还可以根据具体的业务需求进行自定义的缓存淘汰，常见的策略有两种： **定时删除和惰性删除** ，其中： （1）定时删除：定时去清理过期的缓存； （2）惰性删除：当有用户请求过来时，再判断这个请求所用到的缓存是否过期，过期的话就去底层系统得到新数据并更新缓存。 两者各有优劣，第一种的缺点是维护大量缓存的key是比较麻烦的，第二种的缺点就是每次用户请求过来都要判断缓存失效，逻辑相对比较复杂！具体用哪种方案，大家可以根据自己的应用场景来权衡。
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF)**缓存击穿**
+### **缓存击穿**
 
 缓存击穿，是指一个key非常热点，在不停的扛着大并发，大并发集中对这一个点进行访问，当这个key在失效的瞬间，持续的大并发就穿破缓存，直接请求数据库，就像在一个屏障上凿开了一个洞。
 
@@ -443,7 +438,7 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 
 服务降级的目的，是为了防止Redis服务故障，导致数据库跟着一起发生雪崩问题。因此，对于不重要的缓存数据，可以采取服务降级策略，例如一个比较常见的做法就是，Redis出现问题，不去数据库查询，而是直接返回默认值给用户。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_17%E3%80%81%E5%81%87%E5%A6%82mysql%E6%9C%891000%E4%B8%87%E6%95%B0%E6%8D%AE-%E9%87%87%E7%94%A8redis%E4%BD%9C%E4%B8%BA%E4%B8%AD%E9%97%B4%E7%BC%93%E5%AD%98-%E5%8F%96%E5%85%B6%E4%B8%AD%E7%9A%8410%E4%B8%87-%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81redis%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E9%83%BD%E6%98%AF%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE)17、假如MySQL有1000万数据，采用Redis作为中间缓存，取其中的10万，如何保证Redis中的数据都是热点数据？
+## 17、假如MySQL有1000万数据，采用Redis作为中间缓存，取其中的10万，如何保证Redis中的数据都是热点数据？
 
 可以使用Redis的 **数据淘汰策略** ，Redis 内存数据集大小上升到一定大小的时候，就会施行这种策略。具体说来，主要有 6种内存淘汰策略：
 
@@ -454,7 +449,7 @@ Redis中有个设置时间过期的功能，即对存储在 Redis 数据库中�
 * allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰
 * no-enviction（驱逐）：禁止驱逐数据
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_18%E3%80%81redis%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6%E5%8F%AF%E4%BB%A5%E8%AF%B4%E4%B8%80%E8%AF%B4%E5%90%97)18、Redis持久化机制可以说一说吗？
+## 18、Redis持久化机制可以说一说吗？
 
 Redis是一个支持持久化的内存数据库，通过持久化机制把内存中的数据同步到硬盘文件来保证数据持久化。当Redis重启后通过把硬盘文件重新加载到内存，就能达到恢复数据的目的。
 
@@ -464,7 +459,7 @@ Redis是一个支持持久化的内存数据库，通过持久化机制把内存
 
 **以下有两种持久化机制**
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#%E5%BF%AB%E7%85%A7-snapshotting-%E6%8C%81%E4%B9%85%E5%8C%96-rdb%E6%8C%81%E4%B9%85%E5%8C%96)**快照（snapshotting）持久化（RDB持久化）**
+### **快照（snapshotting）持久化（RDB持久化）**
 
 Redis可以通过创建快照来获得存储在内存里面的数据在某个时间点上的副本。Redis创建快照之后，可以对快照进行 备份，可以将快照复制到其他服务器从而创建具有相同数据的服务器副本（Redis主从结构，主要用来提高Redis性 能），还可以将快照留在原地以便重启服务器的时候使用。
 
@@ -482,7 +477,7 @@ save 60 10000 #在60秒(1分钟)之后，如果至少有10000个key发生变化�
   
 ```
 
-### [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#aof-append-only-file-%E6%8C%81%E4%B9%85%E5%8C%96)**AOF（append-only file）持久化**
+### **AOF（append-only file）持久化**
 
 与快照持久化相比，AOF **持久化的实时性更好** ，因此已成为主流的持久化方案。默认情况下Redis没有开启 AOF（append only ﬁle）方式的持久化，可以通过appendonly参数开启：`appendonly yes`
 
@@ -507,7 +502,7 @@ Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（默认关闭，可以通
 
 如果把混合持久化打开，AOF 重写的时候就直接把 RDB 的内容写到 AOF 文件开头。这样做的好处是可以结合 RDB 和 AOF 的优点, 快速加载同时避免丢失过多的数据。当然缺点也是有的， AOF 里面的 RDB 部分是压缩格式不再是 AOF 格式，可读性较差。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_19%E3%80%81aof%E9%87%8D%E5%86%99%E4%BA%86%E8%A7%A3%E5%90%97-%E5%8F%AF%E4%BB%A5%E7%AE%80%E5%8D%95%E8%AF%B4%E8%AF%B4%E5%90%97)19、AOF重写了解吗？可以简单说说吗？
+## 19、AOF重写了解吗？可以简单说说吗？
 
 AOF重写可以产生一个新的AOF文件，这个新的AOF文件和原有的AOF文件所保存的数据库状态一样， **但体积更小** 。
 
@@ -515,7 +510,7 @@ AOF重写是一个有歧义的名字，该功能是通过读取数据库中的**
 
 在执行 BGREWRITEAOF 命令时，Redis 服务器会维护一个 AOF  **重写缓冲区** ，该缓冲区会在子进程创建新AOF文件期间，记录服务器执行的所有写命令。 **当子进程完成创建新AOF文件的工作之后，服务器会将重写缓冲区中的所有内容 追加到新AOF文件的末尾，使得新旧两个AOF文件所保存的数据库状态一致** 。最后，服务器用新的AOF文件替换旧的 AOF文件，以此来完成AOF文件重写操作。
 
-## [#](https://interviewguide.cn/notes/03-hunting_job/02-interview/04-02-01-Redis.html#_20%E3%80%81%E6%98%AF%E5%90%A6%E4%BD%BF%E7%94%A8%E8%BF%87redis%E9%9B%86%E7%BE%A4-%E9%9B%86%E7%BE%A4%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88)20、是否使用过Redis集群？集群的原理是什么？
+## 20、是否使用过Redis集群？集群的原理是什么？
 
 Redis Sentinel（哨兵）着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。
 

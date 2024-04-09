@@ -1749,6 +1749,7 @@ private:
     static singleClass* instance;
     singleClass(){};
 };
-singleClass* singleClass::instance = new singleClass;
+singleClass* singleClass::instance = new singleClass; 
+
 ```
 

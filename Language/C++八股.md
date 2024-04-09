@@ -29,7 +29,13 @@
 3. struct 中默认的访问控制权限是 public 的，而 class 中默认的访问控制权限是 private 的，例如：
 
 ```C++
-struct A{ int iNum;// 默认访问控制权限是 public } class B{ int iNum;// 默认访问控制权限是 private }
+struct A{ 
+    int iNum;// 默认访问控制权限是 public 
+};
+
+class B{ 
+    int iNum;// 默认访问控制权限是 private 
+};
 ```
 
 C++保留struct关键字，主要有如下原因
@@ -1119,7 +1125,6 @@ typedef static int INT_STATIC;
 要点就是拷贝初始化和直接初始化调用的构造函数是不一样的，但是当类进行复制时，类会自动生成一个临时的对象，然后再进行拷贝初始化。
 
 ## 47、enum枚举类型和#define宏定义的区别
-
 1. 宏定义没有类型检查和安全检查，所以会导致边际效应，出现不可预知的错误；enum在编译阶段进行类型检查，但是只能进行整型的定义；
 2. 宏定义仅仅是替换和展开，并不进行内存的分配；enum常量存储在内存数据段的静态存储区；
 3. define是在预处理阶段对所定义的常量进行替换展开；enum是程序运行时起作用；
@@ -2145,7 +2150,7 @@ int main()
 
 1. 仿函数（functor）又称为函数对象（function object）是一个能行使函数功能的类。仿函数的语法几乎和我们普通的函数调用一样，不过作为仿函数的类，都必须重载operator()运算符，举个例子：
 
-   ```
+```C++
 class Func{
 public:
     void operator() (const string& str) const {
@@ -2163,17 +2168,17 @@ myFunc("helloworld!");
 1. 仿函数既能想普通函数一样传入给定数量的参数，还能存储或者处理更多我们需要的有用信息。我们可以举个例子：
    假设有一个vector `<string>`，你的任务是统计长度小于5的string的个数，如果使用count_if函数的话，你的代码可能长成这样：
 
-```
+```C++
     bool LengthIsLessThanFive(const string& str) {
         return str.length()<5;  
     }
     int res=count_if(vec.begin(), vec.end(), LengthIsLessThanFive);
 
-   ```
+```
 
    其中count_if函数的第三个参数是一个函数指针，返回一个bool类型的值。一般的，如果需要将特定的阈值长度也传入的话，我们可能将函数写成这样：
 
-   ```
+   ```C++
     bool LenthIsLessThan(const string& str, int len) {
         return str.length()<len;
     }
@@ -2181,7 +2186,7 @@ myFunc("helloworld!");
 
    这个函数看起来比前面一个版本更具有一般性，但是他不能满足count_if函数的参数要求：count_if要求的是unary function（仅带有一个参数）作为它的最后一个参数。如果我们使用仿函数，是不是就豁然开朗了呢：
 
-   ```
+   ```C++
     class ShorterThan {
     public:
         explicit ShorterThan(int maxLength) : length(maxLength) {}
