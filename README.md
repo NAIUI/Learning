@@ -9,6 +9,8 @@
 
 [国内外优秀音视频博客](https://zhuanlan.zhihu.com/p/27410154)
 
+[音视频基础知识](https://mp.weixin.qq.com/s/fOdS2iw_MilxUeBXyqwBdQ)
+
 ## C/C++
 
 * C++新特性了解一下([C++11](./Language/C++new/Cpp11.md)、[C++14](./Language/C++new/Cpp14.md)、[C++17](./Language/C++new/Cpp17.md)、[C++20](./Language/C++new/Cpp20.md))
