@@ -29,3 +29,5 @@
 [GrindGold/CppGuide: 「C/C++学习+面试指南」一份涵盖大部分 C++ 程序员所需要掌握的知识。 (github.com)](https://github.com/GrindGold/CppGuide)
 
 [10大性能陷阱！每个C++工程师都要知道 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/579795036)
+
+[c++虚函数表的调用与修改 ](https://bbs.kanxue.com/thread-254937.html)
