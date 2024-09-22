@@ -31,3 +31,7 @@
 [10大性能陷阱！每个C++工程师都要知道 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/579795036)
 
 [c++虚函数表的调用与修改 ](https://bbs.kanxue.com/thread-254937.html)
+
+[C++面试八股文：如何避免死锁？](https://zhuanlan.zhihu.com/p/641510924)
+
+[C++11多线程|互斥锁|条件变量|异步|巨巨巨详细](https://zhuanlan.zhihu.com/p/681781553)

@@ -8,6 +8,8 @@
 
 [Linux | 详解线程池原理及C语言的实现 (qq.com)](https://mp.weixin.qq.com/s/f60R2IOPZ8b0BbUN4dMQsw)
 
+[实现尽量不丢弃任务的线程池拒绝策略](https://zhuanlan.zhihu.com/p/704296651)
+
 ## 3、Linux运维相关
 
 [一个小Tips:Linux 下查看内存使用情况方法总结 (qq.com)](https://mp.weixin.qq.com/s/jHOnlJJgX8c1-l-7a6Jofw)
